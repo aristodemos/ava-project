@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:id="@+id/mainLayout">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:id="@+id/roiOptions" android:orientation="horizontal"
+		android:layout_gravity="bottom" android:visibility="invisible">
+		<Button android:text="@+string/undo" android:id="@+id/btnUndo"
+			android:layout_weight=".5" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"></Button>
+		<Button android:text="@+string/ok" android:id="@+id/btnOk"
+			android:layout_weight=".5" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"></Button>
+	</LinearLayout>
+
+</FrameLayout>

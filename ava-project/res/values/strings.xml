@@ -2,4 +2,7 @@
 <resources>
     <string name="hello">Hello World, StartActivity!</string>
     <string name="app_name">ava-project</string>
+    <string name="draw_roi">Draw ROI</string>
+    <string name="undo">Undo</string>
+    <string name="ok">Ok</string>
 </resources>
