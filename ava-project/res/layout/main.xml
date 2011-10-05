@@ -3,16 +3,24 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:id="@+id/mainLayout">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:id="@+id/roiOptions" android:orientation="horizontal"
-		android:layout_gravity="bottom" android:visibility="invisible">
-		<Button android:text="@+string/undo" android:id="@+id/btnUndo"
-			android:layout_weight=".5" android:layout_width="wrap_content"
-			android:layout_height="wrap_content"></Button>
-		<Button android:text="@+string/ok" android:id="@+id/btnOk"
-			android:layout_weight=".5" android:layout_width="wrap_content"
-			android:layout_height="wrap_content"></Button>
-	</LinearLayout>
+<!-- 	<LinearLayout android:layout_width="fill_parent" -->
+<!-- 		android:layout_height="fill_parent"> -->
+		<com.epl603.ava.views.DrawingPanel
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:id="@+id/roiPanel"></com.epl603.ava.views.DrawingPanel>
+
+<!-- 		<LinearLayout  -->
+<!-- 			android:layout_width="fill_parent" android:layout_height="wrap_content" -->
+<!-- 			android:id="@+id/roiOptions" android:orientation="horizontal" -->
+<!-- 			android:layout_gravity="bottom" android:visibility="visible"> -->
+<!-- 			<Button android:text="@+string/undo" android:id="@+id/btnUndo" -->
+<!-- 				android:layout_weight=".5" android:layout_width="wrap_content" -->
+<!-- 				android:layout_height="wrap_content"></Button> -->
+<!-- 			<Button android:text="@+string/ok" android:id="@+id/btnOk" -->
+<!-- 				android:layout_weight=".5" android:layout_width="wrap_content" -->
+<!-- 				android:layout_height="wrap_content"></Button> -->
+<!-- 		</LinearLayout> -->
+<!-- 	</LinearLayout> -->
+
 
 </FrameLayout>
