@@ -3,16 +3,20 @@ package com.epl603.ava.views;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.epl603.ava.classes.DrawingThread;
 import com.epl603.ava.classes.PointPath;
+import com.epl603.ava.activities.BioMedActivity;
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
 	private DrawingThread _thread;
@@ -21,6 +25,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private Paint mPaint;
 	public boolean isDrawMode;
 	public int currentPathIndex = 0;
+	private boolean isCleanRequest = true;
+	private boolean pointsChange = false;
 
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -58,11 +64,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public void exitDrawMode() {
 		isDrawMode = false;
 	}
-	
-	public void ClearROIs()
-	{
+
+	public void ClearROIs() {
 		_graphics = new ArrayList<PointPath>();
 		currentPathIndex = 0;
+		isCleanRequest = true;
 		this.invalidate();
 	}
 
@@ -73,14 +79,31 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 		((PointPath) _graphics.get(currentPathIndex)).close();
 		currentPathIndex++;
+		pointsChange = true;
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
 		synchronized (_thread.getSurfaceHolder()) {
 
-			if (!isDrawMode)
-				return true;
+			if (!isDrawMode) {
+				dumpEvent(event);
 
+				float start_x;
+				float start_y;
+				float end_x;
+				float end_y;
+				
+				int action = event.getAction();
+				int actionCode = action & MotionEvent.ACTION_MASK;
+				if (actionCode == MotionEvent.ACTION_POINTER_DOWN) {
+					
+				}
+
+				return true;
+			}
+
+			pointsChange = true;
+			
 			if (currentPathIndex > _graphics.size() - 1) {
 				_graphics.add(new PointPath());
 			}
@@ -101,14 +124,24 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 	@Override
 	public void onDraw(Canvas canvas) {
+
+		//if (isCleanRequest) {
+		//Bitmap bMap = BitmapFactory.decodeFile("/sdcard/test2.png");
+		//canvas.drawBitmap(bMap, 0, 0, mPaint);
+		Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
+				.getSelectedImagePath());
+		canvas.drawBitmap(mBitMap, 0, 0, null);
+		isCleanRequest = false;
+	//}
 		
-		for (PointPath path : _graphics) {
-			canvas.drawPath(path, mPaint);
-		}
-		if (_graphics.size() == 0)
-		{
-			canvas = new Canvas();
-		}
+		//if (pointsChange) {
+			for (PointPath path : _graphics) {
+				canvas.drawPath(path, mPaint);
+			}
+			pointsChange = false;
+	//	}
+
+		
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -147,6 +180,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			}
 		}
 	}
+	
+	public boolean needsRedraw()
+	{
+		return isCleanRequest || pointsChange;
+	}
 
 	private void initializePaint() {
 		// initialize paint
@@ -158,4 +196,32 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
 		mPaint.setStrokeWidth(3);
 	}
+
+	/** Show an event in the LogCat view, for debugging */
+	private void dumpEvent(MotionEvent event) {
+		String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
+				"POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
+		StringBuilder sb = new StringBuilder();
+		int action = event.getAction();
+		int actionCode = action & MotionEvent.ACTION_MASK;
+		sb.append("event ACTION_").append(names[actionCode]);
+		if (actionCode == MotionEvent.ACTION_POINTER_DOWN
+				|| actionCode == MotionEvent.ACTION_POINTER_UP) {
+			sb.append("(pid ").append(
+					action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+			sb.append(")");
+		}
+		sb.append("[");
+		for (int i = 0; i < event.getPointerCount(); i++) {
+			sb.append("#").append(i);
+			sb.append("(pid ").append(event.getPointerId(i));
+			sb.append(")=").append((int) event.getX(i));
+			sb.append(",").append((int) event.getY(i));
+			if (i + 1 < event.getPointerCount())
+				sb.append(";");
+		}
+		sb.append("]");
+		Log.d("dumpEvent", sb.toString());
+	}
+
 }

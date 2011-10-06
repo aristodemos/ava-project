@@ -33,9 +33,12 @@ public class DrawingThread extends Thread {
 		while (_run) {
 			c = null;
 			try {
-				c = _surfaceHolder.lockCanvas(null);
-				synchronized (_surfaceHolder) {
-					_panel.onDraw(c);
+				if (_panel.needsRedraw()) {
+					c = _surfaceHolder.lockCanvas(null);
+					synchronized (_surfaceHolder) {
+
+						_panel.onDraw(c);
+					}
 				}
 			} finally {
 				// do this in a finally so that if an exception is thrown
