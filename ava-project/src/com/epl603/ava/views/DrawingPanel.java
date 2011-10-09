@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -27,6 +28,12 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public int currentPathIndex = 0;
 	private boolean isCleanRequest = true;
 	private boolean pointsChange = false;
+	
+	private Matrix matrix = new Matrix();
+	private float matrix_x = 0;
+	private float matrix_y = 0;
+	private float start_x = 0;
+	private float start_y = 0;
 
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -45,10 +52,18 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		initializeView();
 	}
 
+	public ArrayList<PointPath> get_graphics() {
+		return _graphics;
+	}
+
+	public void set_graphics(ArrayList<PointPath> _graphics) {
+		this._graphics = _graphics;
+	}
+
 	private void initializeView() {
 		getHolder().addCallback(this);
 		_thread = new DrawingThread(getHolder(), this);
-
+		
 		initializePaint();
 	}
 
@@ -73,7 +88,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public void CloseActivePath() {
-		if (_graphics.size() == 0 || _graphics.get(currentPathIndex) == null) {
+		if (_graphics.size() == currentPathIndex
+				|| _graphics.get(currentPathIndex) == null) {
 			return;
 		}
 
@@ -88,22 +104,88 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			if (!isDrawMode) {
 				dumpEvent(event);
 
-				float start_x;
-				float start_y;
-				float end_x;
-				float end_y;
-				
+				boolean isZoom = false;
+				boolean isMove = false;
+
+				//float start_x = 0;
+				//float start_y = 0;
+
 				int action = event.getAction();
 				int actionCode = action & MotionEvent.ACTION_MASK;
-				if (actionCode == MotionEvent.ACTION_POINTER_DOWN) {
-					
+
+				int numevents = event.getPointerCount();
+				// int action = event.getAction();
+				// 1 = normal action (scroll); 2 = multitouch (zoom in/out)
+				Log.v("Zoom", "PointerCount=" + numevents);
+				if (numevents == 1) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						// Remember our initial down event location.
+						start_x = event.getRawX();
+						start_y = event.getRawY();
+						break;
+					case MotionEvent.ACTION_MOVE:
+						float x = event.getRawX();
+						float y = event.getRawY();
+
+						
+						matrix.setTranslate(x - start_x + matrix_x, y - start_y + matrix_y);
+						
+						//matrix_x += x - start_x;
+						//matrix_y += x - start_y;
+						
+						// TODO: how to handle zoom in/out?
+					//	invalidate(); // force a redraw
+						pointsChange = true;
+						
+						
+						
+						break;
+					case MotionEvent.ACTION_UP:
+						matrix_x += event.getRawX() - start_x;
+						matrix_y += event.getRawY() - start_y;
+						break;
+					}
 				}
+				/*
+				 * else { switch (event.getAction()) { case
+				 * MotionEvent.ACTION_DOWN: // Remember our initial down event
+				 * location. start_x = event.getRawX(); start_y =
+				 * event.getRawY(); break; case MotionEvent.ACTION_MOVE: float x
+				 * = event.getRawX(); float y = event.getRawY(); scrollByX = x -
+				 * startX; //move update x increment scrollByY = y - startY;
+				 * //move update y increment startX = x; //reset initial values
+				 * to latest startY = y; invalidate(); //force a redraw break; }
+				 */
+				/*
+				 * if (actionCode == MotionEvent.ACTION_POINTER_DOWN) { start_x
+				 * = event.getX(); start_y = event.getX(); } else if (actionCode
+				 * == MotionEvent.ACTION_POINTER_UP) { end_x = event.getX();
+				 * end_y = event.getX();
+				 * 
+				 * isZoom = true; }
+				 * 
+				 * if (actionCode == MotionEvent.ACTION_DOWN) { start_x =
+				 * event.getX(); start_y = event.getX(); } else if (actionCode
+				 * == MotionEvent.ACTION_UP) { end_x = event.getX(); end_y =
+				 * event.getX();
+				 * 
+				 * isMove = true; }
+				 * 
+				 * if (isZoom) {
+				 * 
+				 * }
+				 * 
+				 * if (isMove) {
+				 * 
+				 * }
+				 */
 
 				return true;
 			}
 
 			pointsChange = true;
-			
+
 			if (currentPathIndex > _graphics.size() - 1) {
 				_graphics.add(new PointPath());
 			}
@@ -125,23 +207,24 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void onDraw(Canvas canvas) {
 
-		//if (isCleanRequest) {
-		//Bitmap bMap = BitmapFactory.decodeFile("/sdcard/test2.png");
-		//canvas.drawBitmap(bMap, 0, 0, mPaint);
+		// if (isCleanRequest) {
+		// Bitmap bMap = BitmapFactory.decodeFile("/sdcard/test2.png");
+		// canvas.drawBitmap(bMap, 0, 0, mPaint);
+		canvas.drawColor(Color.BLACK);
 		Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
 				.getSelectedImagePath());
-		canvas.drawBitmap(mBitMap, 0, 0, null);
+		// canvas.drawBitmap(mBitMap, 0, 0, null);
+		canvas.drawBitmap(mBitMap, matrix, null);
 		isCleanRequest = false;
-	//}
-		
-		//if (pointsChange) {
-			for (PointPath path : _graphics) {
-				canvas.drawPath(path, mPaint);
-			}
-			pointsChange = false;
-	//	}
+		// }
 
-		
+		// if (pointsChange) {
+		for (PointPath path : _graphics) {
+			canvas.drawPath(path, mPaint);
+		}
+		pointsChange = false;
+		// }
+
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -180,9 +263,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			}
 		}
 	}
-	
-	public boolean needsRedraw()
-	{
+
+	public boolean needsRedraw() {
 		return isCleanRequest || pointsChange;
 	}
 
