@@ -5,9 +5,16 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+import android.widget.ToggleButton;
+
+import java.util.ArrayList;
+import android.graphics.Point;
 
 import com.epl603.ava.R;
+import com.epl603.ava.classes.PointPath;
 import com.epl603.ava.views.DrawingPanel;
 
 public class DrawActivity extends Activity {
@@ -29,6 +36,19 @@ public class DrawActivity extends Activity {
 
 		mainView = (FrameLayout) findViewById(R.id.mainLayout);
 		roi_panel = (DrawingPanel) findViewById(R.id.roiPanel);
+		
+		final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
+		togglebutton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				//perform actions on clicks
+				if (togglebutton.isChecked()){
+					roi_panel.enterDrawMode();
+				} else {
+					roi_panel.exitDrawMode();
+				}
+				
+			}
+		});
 
 	}
 
@@ -59,6 +79,8 @@ public class DrawActivity extends Activity {
 			return true;
 		case MENU_CLOSE_ROI:
 			roi_panel.CloseActivePath();
+			//TODO: save points using getROIpoints method(aris)
+			//saveROI2XMLfile(PointPath.getROIpoints());
 			return true;
 		case MENU_CLEAR:
 			roi_panel.ClearROIs();
@@ -66,6 +88,10 @@ public class DrawActivity extends Activity {
 		return false;
 	}
 	
+	//aris - method to output arraylist of ROI points to XML
+	public void saveROI2XMLfile(ArrayList<Point> points){
+		
+	}
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// when orientation changes

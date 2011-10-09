@@ -23,6 +23,10 @@
 <!-- 				android:layout_height="wrap_content"></Button> -->
 <!-- 		</LinearLayout> -->
 <!-- 	</LinearLayout> -->
-
+    <ToggleButton android:id="@+id/togglebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="Draw on"
+        android:textOff="Draw off"/>
 
 </FrameLayout>
