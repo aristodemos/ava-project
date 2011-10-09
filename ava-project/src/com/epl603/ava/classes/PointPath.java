@@ -43,5 +43,10 @@ public class PointPath extends Path{
 		
 		return points.size();
 	}
+	
+	//aris added this, to export points array list
+	public ArrayList<Point> getROIpoints(){
+		return points;
+	}
 
 }
