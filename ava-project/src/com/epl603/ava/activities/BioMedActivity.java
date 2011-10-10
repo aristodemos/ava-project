@@ -57,11 +57,12 @@ public class BioMedActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                selectedImagePath = getPath(selectedImageUri);           
+                selectedImagePath = getPath(selectedImageUri);      
+                
+                Intent i = new Intent(BioMedActivity.this, DrawActivity.class);
+                startActivity(i);
             }
-        }
-        Intent i = new Intent(BioMedActivity.this, DrawActivity.class);
-        startActivity(i);
+        }     
     }
     
     

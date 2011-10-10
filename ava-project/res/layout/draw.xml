@@ -27,6 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textOn="Draw on"
-        android:textOff="Draw off"/>
+        android:textOff="Draw off" android:layout_gravity="right"/>
 
 </FrameLayout>

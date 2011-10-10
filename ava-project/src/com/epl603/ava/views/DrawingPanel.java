@@ -9,31 +9,66 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
+import com.epl603.ava.activities.BioMedActivity;
 import com.epl603.ava.classes.DrawingThread;
 import com.epl603.ava.classes.PointPath;
-import com.epl603.ava.activities.BioMedActivity;
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
 	private DrawingThread _thread;
 	private ArrayList<PointPath> _graphics = new ArrayList<PointPath>();
+
+	private Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
+			.getSelectedImagePath());
 
 	private Paint mPaint;
 	public boolean isDrawMode;
 	public int currentPathIndex = 0;
 	private boolean isCleanRequest = true;
 	private boolean pointsChange = false;
-	
+
 	private Matrix matrix = new Matrix();
-	private float matrix_x = 0;
-	private float matrix_y = 0;
-	private float start_x = 0;
-	private float start_y = 0;
+	//private PointF matrix_translate = new PointF(0, 0);
+	//private PointF start_translate = new PointF(0, 0);
+	//private float scaleFactor = 1;
+	private PointF mid = new PointF();
+	private float oldDist = 1f;
+	//private boolean isZoom = false;
+	private float scale = 1F;
+
+	/*private int screenHeight;
+	private int screenWidth;
+	private int bitmapHeight;
+	private int bitmapWidth;*/
+
+	private static final String TAG = "Touch";
+	// These matrices will be used to move and zoom image
+	// private Matrix matrix = new Matrix();
+	private Matrix savedMatrix = new Matrix();
+	//private Bitmap image;
+	// private File imageFile;
+
+	// We can be in one of these 3 states
+	static final int NONE = 0;
+	static final int DRAG = 1;
+	static final int ZOOM = 2;
+	int mode = NONE;
+
+	// Remember some things for zooming
+	private PointF start = new PointF();
+
+	// private PointF mid = new PointF();
+	// private float oldDist = 1f;
 
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -63,7 +98,22 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private void initializeView() {
 		getHolder().addCallback(this);
 		_thread = new DrawingThread(getHolder(), this);
-		
+
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		((WindowManager) this.getContext().getSystemService(
+				Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(
+				displaymetrics);
+		/*screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
+
+		bitmapHeight = mBitMap.getHeight();
+		bitmapWidth = mBitMap.getWidth();*/
+
+		// Display display = ((WindowManager)
+		// this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		// screenHeight = display.getHeight();
+		// screenWidth = display.getWidth();
+
 		initializePaint();
 	}
 
@@ -102,84 +152,65 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		synchronized (_thread.getSurfaceHolder()) {
 
 			if (!isDrawMode) {
-				dumpEvent(event);
+				// dumpEvent(event);
 
-				boolean isZoom = false;
-				boolean isMove = false;
-
-				//float start_x = 0;
-				//float start_y = 0;
-
-				int action = event.getAction();
-				int actionCode = action & MotionEvent.ACTION_MASK;
-
-				int numevents = event.getPointerCount();
-				// int action = event.getAction();
-				// 1 = normal action (scroll); 2 = multitouch (zoom in/out)
-				Log.v("Zoom", "PointerCount=" + numevents);
-				if (numevents == 1) {
-					switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN:
-						// Remember our initial down event location.
-						start_x = event.getRawX();
-						start_y = event.getRawY();
-						break;
-					case MotionEvent.ACTION_MOVE:
-						float x = event.getRawX();
-						float y = event.getRawY();
-
-						
-						matrix.setTranslate(x - start_x + matrix_x, y - start_y + matrix_y);
-						
-						//matrix_x += x - start_x;
-						//matrix_y += x - start_y;
-						
-						// TODO: how to handle zoom in/out?
-					//	invalidate(); // force a redraw
-						pointsChange = true;
-						
-						
-						
-						break;
-					case MotionEvent.ACTION_UP:
-						matrix_x += event.getRawX() - start_x;
-						matrix_y += event.getRawY() - start_y;
-						break;
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					savedMatrix.set(matrix);
+					start.set(event.getX(), event.getY());
+					Log.d(TAG, "mode=DRAG");
+					mode = DRAG;
+					break;
+				case MotionEvent.ACTION_POINTER_DOWN:
+					oldDist = spacing(event);
+					Log.d(TAG, "oldDist=" + oldDist);
+					if (oldDist > 10f) {
+						savedMatrix.set(matrix);
+						midPoint(mid, event);
+						mode = ZOOM;
+						Log.d(TAG, "mode=ZOOM");
 					}
+					break;
+				case MotionEvent.ACTION_UP:
+					int xDiff = (int) Math.abs(event.getX() - start.x);
+					int yDiff = (int) Math.abs(event.getY() - start.y);
+					if (xDiff < 15 && yDiff < 15) {
+						performClick();
+					}
+					/*if (mode == DRAG) {
+						matrix_translate.x += event.getX() - start.x;
+						matrix_translate.y += event.getY() - start.y;
+					}
+					else 
+					{
+						scaleFactor += scale; 
+					}*/
+					//TranslateROIs();
+					pointsChange = true;
+				case MotionEvent.ACTION_POINTER_UP:
+					mode = NONE;
+					Log.d(TAG, "mode=NONE");
+					break;
+				case MotionEvent.ACTION_MOVE:
+					if (mode == DRAG) {
+
+						matrix.set(savedMatrix);
+						matrix.postTranslate(event.getX() - start.x,
+								event.getY() - start.y);
+											
+					} else if (mode == ZOOM) {
+						float newDist = spacing(event);
+						Log.d(TAG, "newDist=" + newDist);
+						if (newDist > 10f) {
+							matrix.set(savedMatrix);
+							scale = newDist / oldDist;
+							matrix.postScale(scale, scale, mid.x, mid.y);
+						}
+					}
+					//TranslateROIs();
+					pointsChange = true;
+					break;
 				}
-				/*
-				 * else { switch (event.getAction()) { case
-				 * MotionEvent.ACTION_DOWN: // Remember our initial down event
-				 * location. start_x = event.getRawX(); start_y =
-				 * event.getRawY(); break; case MotionEvent.ACTION_MOVE: float x
-				 * = event.getRawX(); float y = event.getRawY(); scrollByX = x -
-				 * startX; //move update x increment scrollByY = y - startY;
-				 * //move update y increment startX = x; //reset initial values
-				 * to latest startY = y; invalidate(); //force a redraw break; }
-				 */
-				/*
-				 * if (actionCode == MotionEvent.ACTION_POINTER_DOWN) { start_x
-				 * = event.getX(); start_y = event.getX(); } else if (actionCode
-				 * == MotionEvent.ACTION_POINTER_UP) { end_x = event.getX();
-				 * end_y = event.getX();
-				 * 
-				 * isZoom = true; }
-				 * 
-				 * if (actionCode == MotionEvent.ACTION_DOWN) { start_x =
-				 * event.getX(); start_y = event.getX(); } else if (actionCode
-				 * == MotionEvent.ACTION_UP) { end_x = event.getX(); end_y =
-				 * event.getX();
-				 * 
-				 * isMove = true; }
-				 * 
-				 * if (isZoom) {
-				 * 
-				 * }
-				 * 
-				 * if (isMove) {
-				 * 
-				 * }
-				 */
 
 				return true;
 			}
@@ -196,7 +227,13 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				myPath = new PointPath();
 			}
 
-			myPath.addPoint(event.getX(), event.getY());
+			//myPath.addPoint(event.getX(), event.getY());
+			
+			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
+			float[] arr = new float[9];
+			matrix.getValues(arr);
+			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
+			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0]);
 			_graphics.remove(currentPathIndex);
 			_graphics.add(myPath);
 
@@ -204,27 +241,61 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		}
 	}
 
+	/*private void TranslateROIs() {
+		
+		ArrayList<PointPath> newPaths = new ArrayList<PointPath>();
+	//	int x=220; int y = 220;
+		for (PointPath path : _graphics) {
+			ArrayList<Point> pts = new ArrayList<Point>();
+			PointPath newPath = new PointPath();
+			for (Point p : path.points) {
+				
+				//Point tp = new Point((int)(p.x + matrix_translate.x), (int)(p.y + matrix_translate.y));
+				//Point tp = new Point(x, y); x++; y++;
+				//pts.add(tp);
+				newPath.addPoint(p.x + matrix_translate.x, p.y + matrix_translate.y);
+				//Log.d("point", "(" + p.x + ", " + p.y + ")");
+			}
+			newPaths.add(newPath);
+		}
+		_graphics = newPaths;
+		pointsChange = true;
+		this.invalidate();
+	}*/
+
+	/** Determine the space between the first two fingers */
+	private float spacing(MotionEvent event) {
+		// ...
+		float x = event.getX(0) - event.getX(1);
+		float y = event.getY(0) - event.getY(1);
+		return FloatMath.sqrt(x * x + y * y);
+	}
+
+	/** Calculate the mid point of the first two fingers */
+	private void midPoint(PointF point, MotionEvent event) {
+		// ...
+		float x = event.getX(0) + event.getX(1);
+		float y = event.getY(0) + event.getY(1);
+		point.set(x / 2, y / 2);
+	}
+
 	@Override
 	public void onDraw(Canvas canvas) {
 
-		// if (isCleanRequest) {
-		// Bitmap bMap = BitmapFactory.decodeFile("/sdcard/test2.png");
-		// canvas.drawBitmap(bMap, 0, 0, mPaint);
 		canvas.drawColor(Color.BLACK);
-		Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
-				.getSelectedImagePath());
-		// canvas.drawBitmap(mBitMap, 0, 0, null);
+
+		// mBitMap.getHeight()
 		canvas.drawBitmap(mBitMap, matrix, null);
 		isCleanRequest = false;
-		// }
 
-		// if (pointsChange) {
 		for (PointPath path : _graphics) {
-			canvas.drawPath(path, mPaint);
+			Path trPath = new Path();
+			//path.offset(matrix_translate.x, matrix_translate.y, trPath);
+			path.transform(matrix, trPath);
+			
+			canvas.drawPath(trPath, mPaint); 
 		}
 		pointsChange = false;
-		// }
-
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
