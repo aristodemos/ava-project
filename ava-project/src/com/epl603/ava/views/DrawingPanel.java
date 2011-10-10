@@ -1,8 +1,6 @@
 package com.epl603.ava.views;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,24 +37,24 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private boolean pointsChange = false;
 
 	private Matrix matrix = new Matrix();
-	// private PointF matrix_translate = new PointF(0, 0);
-	// private PointF start_translate = new PointF(0, 0);
-	// private float scaleFactor = 1;
+	//private PointF matrix_translate = new PointF(0, 0);
+	//private PointF start_translate = new PointF(0, 0);
+	//private float scaleFactor = 1;
 	private PointF mid = new PointF();
 	private float oldDist = 1f;
-	// private boolean isZoom = false;
+	//private boolean isZoom = false;
 	private float scale = 1F;
 
-	/*
-	 * private int screenHeight; private int screenWidth; private int
-	 * bitmapHeight; private int bitmapWidth;
-	 */
+	/*private int screenHeight;
+	private int screenWidth;
+	private int bitmapHeight;
+	private int bitmapWidth;*/
 
 	private static final String TAG = "Touch";
 	// These matrices will be used to move and zoom image
 	// private Matrix matrix = new Matrix();
 	private Matrix savedMatrix = new Matrix();
-	// private Bitmap image;
+	//private Bitmap image;
 	// private File imageFile;
 
 	// We can be in one of these 3 states
@@ -89,15 +87,17 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public String get_graphics() {
-		String stringList = "";
-		// aris:
-		// http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
-		// for (int i=0; i<_graphics.size(); i++ ) {
-		// for (int k=0; k< k++) {
-
-		// stringList = stringList + _graphics.toString();
-		// }
-
+		String stringList ="path0_"; 
+		//aris: http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
+		for (PointPath path : _graphics) {
+			 for (PointF p : path.points){
+				 stringList = stringList + "x=" +p.x + "_y="+p.y+"_" ;	 
+			 }	
+			 stringList = stringList + "path"+"_dd" ;
+		}
+			
+		
+		
 		return stringList;
 	}
 
@@ -113,12 +113,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		((WindowManager) this.getContext().getSystemService(
 				Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(
 				displaymetrics);
-		/*
-		 * screenHeight = displaymetrics.heightPixels; screenWidth =
-		 * displaymetrics.widthPixels;
-		 * 
-		 * bitmapHeight = mBitMap.getHeight(); bitmapWidth = mBitMap.getWidth();
-		 */
+		/*screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
+
+		bitmapHeight = mBitMap.getHeight();
+		bitmapWidth = mBitMap.getWidth();*/
 
 		// Display display = ((WindowManager)
 		// this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -146,17 +145,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		currentPathIndex = 0;
 		isCleanRequest = true;
 		this.invalidate();
-	}
-
-	public void UndoLastPoint() {
-		PointPath path = _graphics.get(currentPathIndex); 
-		if (path != null)
-		{
-			path.RemoveLastPoint();
-			_graphics.remove(currentPathIndex);
-			_graphics.add(currentPathIndex, path);
-			isCleanRequest = true;
-		}
 	}
 
 	public void CloseActivePath() {
@@ -199,12 +187,15 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 					if (xDiff < 15 && yDiff < 15) {
 						performClick();
 					}
-					/*
-					 * if (mode == DRAG) { matrix_translate.x += event.getX() -
-					 * start.x; matrix_translate.y += event.getY() - start.y; }
-					 * else { scaleFactor += scale; }
-					 */
-					// TranslateROIs();
+					/*if (mode == DRAG) {
+						matrix_translate.x += event.getX() - start.x;
+						matrix_translate.y += event.getY() - start.y;
+					}
+					else 
+					{
+						scaleFactor += scale; 
+					}*/
+					//TranslateROIs();
 					pointsChange = true;
 				case MotionEvent.ACTION_POINTER_UP:
 					mode = NONE;
@@ -216,7 +207,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 						matrix.set(savedMatrix);
 						matrix.postTranslate(event.getX() - start.x,
 								event.getY() - start.y);
-
+											
 					} else if (mode == ZOOM) {
 						float newDist = spacing(event);
 						Log.d(TAG, "newDist=" + newDist);
@@ -226,7 +217,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 							matrix.postScale(scale, scale, mid.x, mid.y);
 						}
 					}
-					// TranslateROIs();
+					//TranslateROIs();
 					pointsChange = true;
 					break;
 				}
@@ -246,14 +237,12 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				myPath = new PointPath();
 			}
 
-			// myPath.addPoint(event.getX(), event.getY());
-
-			// myPath.addPoint(event.getX(), event.getY(), matrix_translate.x,
-			// matrix_translate.y, matrix.MSCALE_X);
+			//myPath.addPoint(event.getX(), event.getY());
+			
+			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
 			float[] arr = new float[9];
 			matrix.getValues(arr);
-			// myPath.addPoint(event.getX(), event.getY(), matrix_translate.x,
-			// matrix_translate.y, matrix.MSCALE_X);
+			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
 			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0]);
 			_graphics.remove(currentPathIndex);
 			_graphics.add(myPath);
@@ -262,21 +251,27 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		}
 	}
 
-	/*
-	 * private void TranslateROIs() {
-	 * 
-	 * ArrayList<PointPath> newPaths = new ArrayList<PointPath>(); // int x=220;
-	 * int y = 220; for (PointPath path : _graphics) { ArrayList<Point> pts =
-	 * new ArrayList<Point>(); PointPath newPath = new PointPath(); for (Point p
-	 * : path.points) {
-	 * 
-	 * //Point tp = new Point((int)(p.x + matrix_translate.x), (int)(p.y +
-	 * matrix_translate.y)); //Point tp = new Point(x, y); x++; y++;
-	 * //pts.add(tp); newPath.addPoint(p.x + matrix_translate.x, p.y +
-	 * matrix_translate.y); //Log.d("point", "(" + p.x + ", " + p.y + ")"); }
-	 * newPaths.add(newPath); } _graphics = newPaths; pointsChange = true;
-	 * this.invalidate(); }
-	 */
+	/*private void TranslateROIs() {
+		
+		ArrayList<PointPath> newPaths = new ArrayList<PointPath>();
+	//	int x=220; int y = 220;
+		for (PointPath path : _graphics) {
+			ArrayList<Point> pts = new ArrayList<Point>();
+			PointPath newPath = new PointPath();
+			for (Point p : path.points) {
+				
+				//Point tp = new Point((int)(p.x + matrix_translate.x), (int)(p.y + matrix_translate.y));
+				//Point tp = new Point(x, y); x++; y++;
+				//pts.add(tp);
+				newPath.addPoint(p.x + matrix_translate.x, p.y + matrix_translate.y);
+				//Log.d("point", "(" + p.x + ", " + p.y + ")");
+			}
+			newPaths.add(newPath);
+		}
+		_graphics = newPaths;
+		pointsChange = true;
+		this.invalidate();
+	}*/
 
 	/** Determine the space between the first two fingers */
 	private float spacing(MotionEvent event) {
@@ -305,10 +300,10 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 		for (PointPath path : _graphics) {
 			Path trPath = new Path();
-			// path.offset(matrix_translate.x, matrix_translate.y, trPath);
+			//path.offset(matrix_translate.x, matrix_translate.y, trPath);
 			path.transform(matrix, trPath);
-
-			canvas.drawPath(trPath, mPaint);
+			
+			canvas.drawPath(trPath, mPaint); 
 		}
 		pointsChange = false;
 	}
