@@ -12,4 +12,5 @@
     
     
     <string name="ok">Ok</string>
+    <string name="save_rois">Save ROIs</string>
 </resources>
