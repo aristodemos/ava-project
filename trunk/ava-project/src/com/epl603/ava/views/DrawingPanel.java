@@ -1,6 +1,7 @@
 package com.epl603.ava.views;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -87,8 +88,19 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		initializeView();
 	}
 
-	public ArrayList<PointPath> get_graphics() {
-		return _graphics;
+	public String get_graphics() {
+		String stringList =""; 
+		//aris: http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
+		//for (int i=0; i<_graphics.size(); i++ ) {
+			//	for (int k=0; k< k++) {
+				
+			
+			//stringList = stringList + _graphics.toString();	
+		//}
+			
+		
+		
+		return stringList;
 	}
 
 	public void set_graphics(ArrayList<PointPath> _graphics) {
