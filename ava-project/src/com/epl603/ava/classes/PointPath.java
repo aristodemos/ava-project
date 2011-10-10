@@ -5,19 +5,20 @@ import java.util.ArrayList;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.util.Log;
 
 public class PointPath extends Path{
-	public ArrayList<PointF> points;
+	public ArrayList<TranslatedPoint> points;
 	//public float dx = 0;
 	//public float dy = 0;
 	
 	public PointPath()
 	{
 		super();
-		points = new ArrayList<PointF>();
+		points = new ArrayList<TranslatedPoint>();
 	}
 	
-	public PointPath(ArrayList<PointF> pts)
+	public PointPath(ArrayList<TranslatedPoint> pts)
 	{
 		super();
 		points = pts;
@@ -40,7 +41,7 @@ public class PointPath extends Path{
 		
 		if (points == null)
 		{
-			points = new ArrayList<PointF>();
+			points = new ArrayList<TranslatedPoint>();
 		}
 		
 		if (points.size() == 0)
@@ -50,15 +51,33 @@ public class PointPath extends Path{
 		}
 	
 		this.lineTo((x-dx)/scale, (y-dy)/scale);
-		points.add(new PointF((x+dx)*scale, (x+dx)*scale));
+		points.add(new TranslatedPoint((x+dx)*scale, (y+dy)*scale, dx, dy, scale));
 		
 		//this.dx = dx;
 		//this.dy = dy;
 	}
 	
-	public PointF getPoint(int index)
+	public void RemoveLastPoint()
 	{
-		return (PointF)points.get(index);
+		points.remove(getPointsCount()-1);
+		this.reset();
+		
+		TranslatedPoint pt = points.get(0);
+		
+		this.moveTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
+		Log.d("START_POINT", points.get(0).x + ", " + points.get(0).y);
+		for (int i=1; i<getPointsCount(); i++)
+		{
+			pt = points.get(i);
+			this.lineTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
+			Log.d("MID_POINT", points.get(0).x + ", " + points.get(0).y);
+		}
+		
+	}
+	
+	public TranslatedPoint getPoint(int index)
+	{
+		return (TranslatedPoint)points.get(index);
 	}
 	
 	public int getPointsCount()
@@ -70,13 +89,13 @@ public class PointPath extends Path{
 	}
 	
 	//aris added this, to export points array list
-	public ArrayList<PointF> getROIpoints(){
+	public ArrayList<TranslatedPoint> getROIpoints(){
 		return points;
 	}
 	
-	/*class TranslatedPoint extends TranslatedPoint
+	class TranslatedPoint extends PointF
 	{
-		public TranslatedPoint(int x, int y)
+		public TranslatedPoint(float x, float y)
 		{
 			super(x, y);
 			dx = 0;
@@ -84,7 +103,7 @@ public class PointPath extends Path{
 			scale = 1;
 		}
 		
-		public TranslatedPoint(int x, int y, float dx, float dy, float scale)
+		public TranslatedPoint(float x, float y, float dx, float dy, float scale)
 		{
 			super(x, y);
 			this.dx = dx;
@@ -96,6 +115,6 @@ public class PointPath extends Path{
 		public float scale;
 		public float dx;
 		public float dy;
-	}*/
+	}
 
 }

@@ -62,7 +62,6 @@ public class DrawActivity extends Activity {
 		menu.clear();
 
 		if (roi_panel.isDrawMode) {
-			menu.add(0, MENU_PAUSE_DRAW, 0, R.string.pause_draw);
 			menu.add(0, MENU_CLOSE_ROI, 0, R.string.close_ROI);
 			menu.add(0, MENU_UNDO, 0, R.string.undo);
 			menu.add(0, MENU_CLEAR, 0, R.string.clear);
@@ -85,11 +84,15 @@ public class DrawActivity extends Activity {
 			return true;
 		case MENU_CLOSE_ROI:
 			roi_panel.CloseActivePath();
-			roi_panel.exitDrawMode();	
+			//roi_panel.exitDrawMode();	
 			//togglebutton.toggle();
 			return true;
 		case MENU_CLEAR:
 			roi_panel.ClearROIs();
+			return true;
+		case MENU_UNDO:
+			roi_panel.UndoLastPoint();
+			return true;
 		}
 		return false;
 	}
