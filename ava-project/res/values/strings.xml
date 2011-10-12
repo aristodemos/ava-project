@@ -13,4 +13,5 @@
     
     <string name="ok">Ok</string>
     <string name="save_rois">Save ROIs</string>
+    <string name="load_roi">LOAD ROI</string>
 </resources>
