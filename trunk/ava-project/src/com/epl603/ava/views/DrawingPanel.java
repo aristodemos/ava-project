@@ -1,6 +1,13 @@
 package com.epl603.ava.views;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.xmlpull.v1.XmlSerializer;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,10 +17,12 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -86,19 +95,57 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		initializeView();
 	}
 
-	public String get_graphics() {
-		String stringList ="path0_"; 
-		//aris: http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
-		for (PointPath path : _graphics) {
-			 for (PointF p : path.points){
-				 stringList = stringList + "x=" +p.x + "_y="+p.y+"_" ;	 
-			 }	
-			 stringList = stringList + "path"+"_dd" ;
-		}
-			
-		
-		
-		return stringList;
+	public void save_graphics() {
+	
+		//create a new file called "new.xml" in the SD card
+        File newxmlfile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "avatest1.xml");
+        try{
+                newxmlfile.createNewFile();
+        }catch(IOException e){
+                Log.e("IOException", "exception in createNewFile() method");
+        }
+        //we have to bind the new file with a FileOutputStream
+        FileOutputStream fileos = null;        
+        try{
+                fileos = new FileOutputStream(newxmlfile);
+        }catch(FileNotFoundException e){
+                Log.e("FileNotFoundException", "can't create FileOutputStream");
+        }
+        //we create a XmlSerializer in order to write xml data
+        XmlSerializer serializer = Xml.newSerializer();
+        try {
+                //we set the FileOutputStream as output for the serializer, using UTF-8 encoding
+                        serializer.setOutput(fileos, "UTF-8");
+                        //Write <?xml declaration with encoding (if encoding not null) and standalone flag (if standalone not null)
+                        serializer.startDocument(null, Boolean.valueOf(true));
+                        //set indentation option
+                        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+                        //start a tag called "image_name"
+                        serializer.startTag(null, "image_name");
+                        serializer.attribute("", "filepath", BioMedActivity.getSelectedImagePath());
+                        //i indent code just to have a view similar to xml-tree
+                             serializer.startTag(null, "ROIs");
+							 for (PointPath myPath : _graphics) {   
+								serializer.startTag(null, "roi");
+								for (PointF p : myPath.points){
+										serializer.attribute("", "x-value", ""+p.x);
+										serializer.attribute("", "y-value", ""+p.y);
+								}		
+								serializer.endTag(null, "roi");
+							}	
+								serializer.endTag(null, "ROIs"); 	
+                        serializer.endTag(null, "image_name");
+                        serializer.endDocument();
+                        //write xml data into the FileOutputStream
+                        serializer.flush();
+                        //finally we close the file stream
+                        fileos.close();
+                       
+                
+            } catch (Exception e) {
+                        Log.e("Exception","error occurred while creating xml file");
+					}
+	
 	}
 
 	public void set_graphics(ArrayList<PointPath> _graphics) {
@@ -246,7 +293,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0]);
 			_graphics.remove(currentPathIndex);
 			_graphics.add(myPath);
-
 			return true;
 		}
 	}
@@ -386,5 +432,17 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		sb.append("]");
 		Log.d("dumpEvent", sb.toString());
 	}
+
+	public void UndoLastPoint() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void loadRoi() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }
