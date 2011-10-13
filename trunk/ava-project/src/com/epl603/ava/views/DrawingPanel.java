@@ -95,56 +95,9 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		initializeView();
 	}
 
-	public void save_graphics() {
+	public ArrayList<PointPath> save_graphics() {
 	
-		//create a new file called "new.xml" in the SD card
-        File newxmlfile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "avatest1.xml");
-        try{
-                newxmlfile.createNewFile();
-        }catch(IOException e){
-                Log.e("IOException", "exception in createNewFile() method");
-        }
-        //we have to bind the new file with a FileOutputStream
-        FileOutputStream fileos = null;        
-        try{
-                fileos = new FileOutputStream(newxmlfile);
-        }catch(FileNotFoundException e){
-                Log.e("FileNotFoundException", "can't create FileOutputStream");
-        }
-        //we create a XmlSerializer in order to write xml data
-        XmlSerializer serializer = Xml.newSerializer();
-        try {
-                //we set the FileOutputStream as output for the serializer, using UTF-8 encoding
-                        serializer.setOutput(fileos, "UTF-8");
-                        //Write <?xml declaration with encoding (if encoding not null) and standalone flag (if standalone not null)
-                        serializer.startDocument(null, Boolean.valueOf(true));
-                        //set indentation option
-                        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-                        //start a tag called "image_name"
-                        serializer.startTag(null, "image_name");
-                        serializer.attribute("", "filepath", BioMedActivity.getSelectedImagePath());
-                        //i indent code just to have a view similar to xml-tree
-                             serializer.startTag(null, "ROIs");
-							 for (PointPath myPath : _graphics) {   
-								serializer.startTag(null, "roi");
-								for (PointF p : myPath.points){
-										serializer.attribute("", "x-value", ""+p.x);
-										serializer.attribute("", "y-value", ""+p.y);
-								}		
-								serializer.endTag(null, "roi");
-							}	
-								serializer.endTag(null, "ROIs"); 	
-                        serializer.endTag(null, "image_name");
-                        serializer.endDocument();
-                        //write xml data into the FileOutputStream
-                        serializer.flush();
-                        //finally we close the file stream
-                        fileos.close();
-                       
-                
-            } catch (Exception e) {
-                        Log.e("Exception","error occurred while creating xml file");
-					}
+		return _graphics;
 	
 	}
 
@@ -438,10 +391,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		
 	}
 
-	public void loadRoi() {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	
 
