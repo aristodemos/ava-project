@@ -36,6 +36,18 @@ public class PointPath extends Path{
 	
 	public void addPoint(float x, float y, float dx, float dy, float scale)
 	{
+		addPoint(x, y, dx, dy, scale, false);
+	}
+	
+	public void addPoint(float x, float y, float dx, float dy, float scale, boolean isBreak)
+	{
+		if (isBreak)
+		{
+			int a;
+			a = 4;
+			a++;
+		}
+		
 		if (scale == 0)
 			scale = 1;
 		
@@ -51,7 +63,7 @@ public class PointPath extends Path{
 		}
 	
 		this.lineTo((x-dx)/scale, (y-dy)/scale);
-		points.add(new TranslatedPoint((x+dx)*scale, (y+dy)*scale, dx, dy, scale));
+		points.add(new TranslatedPoint((x+dx)*scale, (y+dy)*scale, dx, dy, scale, isBreak));
 		
 		//this.dx = dx;
 		//this.dy = dy;
@@ -59,8 +71,25 @@ public class PointPath extends Path{
 	
 	public void RemoveLastPoint()
 	{
-		points.remove(getPointsCount()-1);
+		//points.remove(getPointsCount()-1);
+		
+		if (getPointsCount() == 0)
+			return;
+		
+		while (true)
+		{			
+			points.remove(getPointsCount()-1);
+			
+			if (points.size() == 0)
+				break;
+			
+			if (points.get(getPointsCount()-1).isBreak)
+				break;
+		}
 		this.reset();
+		
+		if (getPointsCount() == 0)
+			return;
 		
 		TranslatedPoint pt = points.get(0);
 		
@@ -70,7 +99,7 @@ public class PointPath extends Path{
 		{
 			pt = points.get(i);
 			this.lineTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
-			Log.d("MID_POINT", points.get(0).x + ", " + points.get(0).y);
+			//Log.d("MID_POINT", points.get(0).x + ", " + points.get(0).y);
 		}
 		
 	}
@@ -105,16 +134,23 @@ public class PointPath extends Path{
 		
 		public TranslatedPoint(float x, float y, float dx, float dy, float scale)
 		{
+			this(x, y, dx, dy, scale, false);
+		}
+		
+		public TranslatedPoint(float x, float y, float dx, float dy, float scale, boolean breaks)
+		{
 			super(x, y);
 			this.dx = dx;
 			this.dy = dy;
 			this.scale = scale;
+			this.isBreak = breaks;
 		}
 		
 	
 		public float scale;
 		public float dx;
 		public float dy;
+		public boolean isBreak;
 	}
 
 }
