@@ -1,5 +1,7 @@
 package com.epl603.ava.activities;
 
+import java.io.File;
+
 import com.epl603.ava.R;
 
 import android.app.Activity;
@@ -51,6 +53,16 @@ public class BioMedActivity extends Activity {
     public static String getSelectedImagePath(){
     	return selectedImagePath;
     }
+    
+    public static String getImageName(){
+    	File  file = new File(selectedImagePath);
+    	//return file.getName();
+    	  int index = file.getName().lastIndexOf('.');
+          if (index>0&& index <= file.getName().length() - 2 ) {
+          return file.getName().substring(0, index);
+          }  
+        return "";
+        }
     
     
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
