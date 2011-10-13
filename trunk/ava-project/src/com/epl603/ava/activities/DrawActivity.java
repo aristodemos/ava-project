@@ -37,6 +37,7 @@ public class DrawActivity extends Activity {
 	private final int MENU_UNDO = 3;
 	private final int MENU_CLEAR = 4;
 	private final int MENU_SAVE = 5;
+	private final int MENU_NEXT = 6;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -68,6 +69,7 @@ public class DrawActivity extends Activity {
 
 		if (roi_panel.isDrawMode) {
 			menu.add(0, MENU_CLOSE_ROI, 0, R.string.close_ROI);
+			menu.add(0, MENU_NEXT, 0, R.string.next);
 			menu.add(0, MENU_UNDO, 0, R.string.undo);
 			menu.add(0, MENU_CLEAR, 0, R.string.clear);
 		} else {
@@ -92,8 +94,9 @@ public class DrawActivity extends Activity {
 			loadRoi();
 		case MENU_CLOSE_ROI:
 			roi_panel.CloseActivePath();
-			//roi_panel.exitDrawMode();	
-			//togglebutton.toggle();
+			return true;
+		case MENU_NEXT:
+			roi_panel.NextPath();
 			return true;
 		case MENU_CLEAR:
 			roi_panel.ClearROIs();
@@ -111,6 +114,8 @@ public class DrawActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// when orientation changes
 	  super.onConfigurationChanged(newConfig);
+	  roi_panel.pointsChange = true;
+	  roi_panel.invalidate();
 	  //setContentView(R.layout.main);
 	}
 	public void save_graphics(ArrayList<PointPath> _graphics) {

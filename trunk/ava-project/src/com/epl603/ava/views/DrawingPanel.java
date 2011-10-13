@@ -17,6 +17,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -39,11 +40,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
 			.getSelectedImagePath());
 
+	/*final float MAX_ZOOM = 4F;
+	final float MIN_ZOOM = 1F;*/
+	
 	private Paint mPaint;
 	public boolean isDrawMode;
 	public int currentPathIndex = 0;
 	private boolean isCleanRequest = true;
-	private boolean pointsChange = false;
+	public boolean pointsChange = false;
 
 	private Matrix matrix = new Matrix();
 	//private PointF matrix_translate = new PointF(0, 0);
@@ -113,6 +117,12 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		((WindowManager) this.getContext().getSystemService(
 				Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(
 				displaymetrics);
+		
+		//RectF src = new RectF(0, 0, mBitMap.getWidth(), mBitMap.getHeight());
+		//RectF dst = new RectF(0, 0, this.getWidth(), this.getHeight());
+		
+		//matrix.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
+		
 		/*screenHeight = displaymetrics.heightPixels;
 		screenWidth = displaymetrics.widthPixels;
 
@@ -157,10 +167,21 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		currentPathIndex++;
 		pointsChange = true;
 	}
+	
+	public void NextPath()
+	{
+		if (_graphics.size() == currentPathIndex
+				|| _graphics.get(currentPathIndex) == null) {
+			return;
+		}
+		currentPathIndex++;
+	}
 
 	public boolean onTouchEvent(MotionEvent event) {
 		synchronized (_thread.getSurfaceHolder()) {
 
+			boolean isBreakPoint = false;
+			
 			if (!isDrawMode) {
 				// dumpEvent(event);
 
@@ -171,6 +192,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 					Log.d(TAG, "mode=DRAG");
 					mode = DRAG;
 					break;
+				case MotionEvent.ACTION_POINTER_2_DOWN:
 				case MotionEvent.ACTION_POINTER_DOWN:
 					oldDist = spacing(event);
 					Log.d(TAG, "oldDist=" + oldDist);
@@ -202,11 +224,28 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 					Log.d(TAG, "mode=NONE");
 					break;
 				case MotionEvent.ACTION_MOVE:
+					float[] arr = new float[9]; 	// translate : x,y : [2],[5]
+					matrix.getValues(arr);	
+					
 					if (mode == DRAG) {
-
+						
+						/*boolean x_boundReached = false;
+						boolean y_boundReached = false;
+						if (arr[2] < (mBitMap.getWidth() - this.getWidth()) * -1)
+						{
+							x_boundReached = true;	
+						}
+						if (arr[5] < (mBitMap.getHeight() - this.getHeight()) * -1)
+						{
+							y_boundReached = true;	
+						}*/
+						
 						matrix.set(savedMatrix);
+						//float x_offset = event.getX() - start.x;
 						matrix.postTranslate(event.getX() - start.x,
 								event.getY() - start.y);
+						
+						
 											
 					} else if (mode == ZOOM) {
 						float newDist = spacing(event);
@@ -214,9 +253,32 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 						if (newDist > 10f) {
 							matrix.set(savedMatrix);
 							scale = newDist / oldDist;
-							matrix.postScale(scale, scale, mid.x, mid.y);
+							
+							/*matrix.getValues(arr);
+							
+							if (scale + arr[4] == MAX_ZOOM || scale + arr[4] > MAX_ZOOM)
+							{
+								matrix.postScale(MAX_ZOOM - arr[4], MAX_ZOOM - arr[4], mid.x, mid.y);
+							}
+							else if (scale + arr[4] == MIN_ZOOM || scale + arr[4] < MIN_ZOOM)
+							{
+								matrix.postScale(MIN_ZOOM + arr[4], MAX_ZOOM - arr[4], mid.x, mid.y);
+							}
+							else*/								
+								matrix.postScale(scale, scale, mid.x, mid.y);
 						}
 					}
+					
+					matrix.getValues(arr);
+					if (arr[2] > 0)
+					{
+						matrix.postTranslate(arr[2]*(-1), 0);
+					}
+					if (arr[5] > 0)
+					{
+						matrix.postTranslate(0, arr[5]*(-1));
+					}
+					
 					//TranslateROIs();
 					pointsChange = true;
 					break;
@@ -237,13 +299,16 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				myPath = new PointPath();
 			}
 
+			if (event.getAction() == MotionEvent.ACTION_UP)
+				isBreakPoint = true;
+			
 			//myPath.addPoint(event.getX(), event.getY());
 			
 			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
 			float[] arr = new float[9];
 			matrix.getValues(arr);
 			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
-			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0]);
+			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0], isBreakPoint);
 			_graphics.remove(currentPathIndex);
 			_graphics.add(myPath);
 			return true;
@@ -387,8 +452,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public void UndoLastPoint() {
-		// TODO Auto-generated method stub
-		
+		if (_graphics.get(currentPathIndex) != null)
+		{
+			_graphics.get(currentPathIndex).RemoveLastPoint();
+			pointsChange = true;
+		}
 	}
 
 

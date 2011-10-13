@@ -3,30 +3,35 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:id="@+id/mainLayout">
 
-<!-- 	<LinearLayout android:layout_width="fill_parent" -->
-<!-- 		android:layout_height="fill_parent"> -->
+	<!-- <LinearLayout android:layout_width="fill_parent" -->
+	<!-- android:layout_height="fill_parent"> -->
 
 
-		<com.epl603.ava.views.DrawingPanel
-			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:id="@+id/roiPanel"></com.epl603.ava.views.DrawingPanel>
+	<com.epl603.ava.views.DrawingPanel
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:id="@+id/roiPanel"></com.epl603.ava.views.DrawingPanel>
 
-<!-- 		<LinearLayout  -->
-<!-- 			android:layout_width="fill_parent" android:layout_height="wrap_content" -->
-<!-- 			android:id="@+id/roiOptions" android:orientation="horizontal" -->
-<!-- 			android:layout_gravity="bottom" android:visibility="visible"> -->
-<!-- 			<Button android:text="@+string/undo" android:id="@+id/btnUndo" -->
-<!-- 				android:layout_weight=".5" android:layout_width="wrap_content" -->
-<!-- 				android:layout_height="wrap_content"></Button> -->
-<!-- 			<Button android:text="@+string/ok" android:id="@+id/btnOk" -->
-<!-- 				android:layout_weight=".5" android:layout_width="wrap_content" -->
-<!-- 				android:layout_height="wrap_content"></Button> -->
-<!-- 		</LinearLayout> -->
-<!-- 	</LinearLayout> -->
-    <ToggleButton android:id="@+id/togglebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOn="Draw on"
-        android:textOff="Draw off" android:layout_gravity="right"/>
+	<!-- <LinearLayout -->
+	<!-- android:layout_width="fill_parent" android:layout_height="wrap_content" -->
+	<!-- android:id="@+id/roiOptions" android:orientation="horizontal" -->
+	<!-- android:layout_gravity="bottom" android:visibility="visible"> -->
+	<!-- <Button android:text="@+string/undo" android:id="@+id/btnUndo" -->
+	<!-- android:layout_weight=".5" android:layout_width="wrap_content" -->
+	<!-- android:layout_height="wrap_content"></Button> -->
+	<!-- <Button android:text="@+string/ok" android:id="@+id/btnOk" -->
+	<!-- android:layout_weight=".5" android:layout_width="wrap_content" -->
+	<!-- android:layout_height="wrap_content"></Button> -->
+	<!-- </LinearLayout> -->
+	<!-- </LinearLayout> -->
+	
+	<ToggleButton android:id="@+id/togglebutton_flag"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textOn="Flag Mode" android:textOff="Flag Mode"
+		android:layout_gravity="left" />
+
+	<ToggleButton android:id="@+id/togglebutton"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textOn="Draw Mode" android:textOff="Draw Mode"
+		android:layout_gravity="right" />
 
 </FrameLayout>
