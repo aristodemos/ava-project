@@ -144,24 +144,24 @@ public class DrawActivity extends Activity {
                         //set indentation option
                         serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
                         //start a tag called "image_name"
-                        serializer.startTag(null, "image:");
+                        serializer.startTag("", "image:");
                         serializer.attribute("", "filepath", BioMedActivity.getSelectedImagePath());
                         //i indent code just to have a view similar to xml-tree
-                             serializer.startTag(null, "ROIs");
+                             serializer.startTag("", "ROIs");
 							 for (PointPath myPath : _graphics) {   
-								serializer.startTag(null, "roi");
+								serializer.startTag("", "roi");
 								
 								for (PointF p : myPath.points){
-									serializer.startTag(null, "Points");
+									serializer.startTag("", "Points");
 										serializer.attribute("", "x-value", ""+p.x);
 										serializer.attribute("", "y-value", ""+p.y);
-										serializer.endTag(null, "Points");
+										serializer.endTag("", "Points");
 								}		
 								
-								serializer.endTag(null, "roi");
+								serializer.endTag("", "roi");
 							}	
-								serializer.endTag(null, "ROIs"); 	
-                        serializer.endTag(null, "image_name");
+								serializer.endTag("", "ROIs"); 	
+                        serializer.endTag("", "image:");
                         serializer.endDocument();
                         //write xml data into the FileOutputStream
                         serializer.flush();
