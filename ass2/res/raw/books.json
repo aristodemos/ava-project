@@ -1,0 +1,62 @@
+{
+    "publishers": [
+        {
+            "name":     "Unknown",
+            "url":      "http://www.unknown.com",
+            "books":    []
+        },
+
+        {
+            "name":     "Addison Wesley",
+            "url":      "http://www.pearsonhighered.com",
+            "books":    [
+                {
+                    "title": "Component Software: Beyond Object-Oriented Programming",
+                    "authors": "Clemens Szyperski",
+                    "isbn": "9780321753021"
+                }
+            ]
+        },
+
+        {
+            "name":     "McGraw-Hill",
+            "url":      "http://www.mcgraw-hill.com",
+            "books":    [
+                {
+                    "title": "Classical and Object-Oriented Software Engineering",
+                    "authors": "Stephen R. Schach",
+                    "isbn": "9780073376189"
+                }
+            ]
+        },
+
+        {
+            "name":     "Wrox",
+            "url":      "http://www.wrox.com",
+            "books":    [
+                {
+                    "title": "Professional Android 2 Application Development",
+                    "authors": "Reto Meier",
+                    "isbn": "9780470565520"
+                },
+                {
+                    "title": "Beginning Android Tablet Application Development",
+                    "authors": "Wei-Meng Lee",
+                    "isbn": "9781118106730"
+                }
+            ]
+        },
+
+        {
+            "name":     "Manning",
+            "url":      "http://www.manning.com",
+            "books":    [
+                {
+                    "title": "Unlocking Android: A Developer's Guide",
+                    "authors": "Frank Ableson, Charlie Collins, Robi Sen",
+                    "isbn": "9780470565520"
+                }
+            ]
+        }
+    ]
+}
