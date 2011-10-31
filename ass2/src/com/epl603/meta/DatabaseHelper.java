@@ -11,48 +11,48 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DatabaseHelper {
 
-	// singleton pattern
 	private final DataBaseOpenHelper databaseOpenHelper;
-	
-	// ensure single instance exists
 	private SQLiteDatabase sqLiteDatabase = null;
-	
-	//private final String DATABASE_NAME = "booksdb";
-	//private final int DATABASE_VERSION = 1; 
-	
-	private static Map<Context, DatabaseHelper> databaseHelpers
-									= new HashMap<Context, DatabaseHelper>();
-	
-	
+
+	private static Map<Context,DatabaseHelper> databaseHelpers = new HashMap<Context,DatabaseHelper>();
+
 	public static DatabaseHelper getDatabaseHelper(final Context context)
 	{
-		if (!databaseHelpers.containsKey(context))
+		if(!databaseHelpers.containsKey(context.getApplicationContext()))
 		{
 			databaseHelpers.put(context, new DatabaseHelper(context));
 		}
-		return databaseHelpers.get(context);
+		return databaseHelpers.get(context.getApplicationContext());
 	}
-	
+
 	private DatabaseHelper(final Context context)
 	{
 		this.databaseOpenHelper = new DataBaseOpenHelper(context, DatabaseMetaData.DATABASE_NAME, DatabaseMetaData.DATABASE_VERSION);
 	}
-	
+
 	private SQLiteDatabase getDatabase()
 	{
-		if (sqLiteDatabase == null)
+		if(sqLiteDatabase == null)
 		{
+			try {
 			sqLiteDatabase = databaseOpenHelper.getWritableDatabase();
+			}
+			catch(Exception ex)
+			{
+				Log.d("EX","catch the exception");
+			}
 		}
+		Log.d("", "sqlite loaded");
 		return sqLiteDatabase;
 	}
-	
-	void cleanup()
+
+	public void cleanup()
 	{
-		if (this.sqLiteDatabase != null)
+		if(this.sqLiteDatabase != null)
 		{
 			this.sqLiteDatabase.close();
 			this.sqLiteDatabase = null;
@@ -115,9 +115,13 @@ public class DatabaseHelper {
 	{
 		final Vector<Book> allBooks = new Vector<Book>();
 		
-		final Cursor cursor = getDatabase().query(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, 
-				DatabaseMetaData.BooksTableMetadata.ALL_COLUMNS,
-				"", null, "", "", DatabaseMetaData.BooksTableMetadata.DEFAULT_SORT_ORDER);
+		final Cursor cursor = getDatabase().query(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, // table name
+				DatabaseMetaData.BooksTableMetadata.ALL_COLUMNS, // select columns
+				null, // selection
+				null, // selection arguments
+				null, // group by
+				null, // having
+				DatabaseMetaData.BooksTableMetadata.DEFAULT_SORT_ORDER); // order by
 		
 		final int TITLE_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.BooksTableMetadata.TITLE);
 		final int AUTHORS_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.BooksTableMetadata.AUTHORS);

@@ -6,6 +6,7 @@ import com.epl603.classes.Book;
 import com.epl603.classes.JSONParser;
 import com.epl603.classes.Publisher;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,21 +45,32 @@ public class DataBaseOpenHelper extends SQLiteOpenHelper {
 			JSONParser parser = new JSONParser(_context);
 			ArrayList<Publisher> publishers = parser.parse();
 			
-			DatabaseHelper dbHelper = DatabaseHelper.getDatabaseHelper(_context);
-			
 			for (int i=0; i<publishers.size(); i++)
 			{
 				Publisher p = publishers.get(i);
-				long id = dbHelper.insertPublisher(p.getName(), p.getUrl());
+				ContentValues contentValues = new ContentValues();
+				contentValues.put(DatabaseMetaData.PublishersTableMetadata.NAME, p.getName());
+				contentValues.put(DatabaseMetaData.PublishersTableMetadata.URL, p.getUrl());
+				
+				long id = db.insert(DatabaseMetaData.PublishersTableMetadata.TABLE_NAME, null, contentValues);
 				
 				for (int k=0; k<p.bookList.size(); k++)
 				{
 					Book b = p.bookList.get(k);
-					dbHelper.insertBook(b.getTitle(), b.getAuthors(), b.getISBN(), id);
+					//ActivityBooks.dbHelper.insertBook(b.getTitle(), b.getAuthors(), b.getISBN(), id);
+					
+					contentValues = new ContentValues();
+					contentValues.put(DatabaseMetaData.BooksTableMetadata.TITLE, b.getTitle());
+					contentValues.put(DatabaseMetaData.BooksTableMetadata.AUTHORS, b.getAuthors());
+					contentValues.put(DatabaseMetaData.BooksTableMetadata.ISBN, b.getISBN());
+					contentValues.put(DatabaseMetaData.BooksTableMetadata.PUBLISHER_ID, id);
+					
+					long t = db.insert(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, null, contentValues);
+					Log.d("", "");
 				}
 			}
 			
-			dbHelper.cleanup();
+			//ActivityBooks.dbHelper.cleanup();
 		}
 		catch (SQLException sqle)
 		{

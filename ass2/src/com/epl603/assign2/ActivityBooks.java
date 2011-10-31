@@ -1,5 +1,8 @@
 package com.epl603.assign2;
 
+import java.util.Vector;
+
+import com.epl603.classes.Book;
 import com.epl603.meta.DatabaseHelper;
 
 import android.app.Activity;
@@ -37,7 +40,8 @@ public class ActivityBooks extends Activity {
 				}
 			});
         
-        ((Button) findViewById(R.id.btnScan))
+        this.dbHelper = DatabaseHelper.getDatabaseHelper(this.getApplicationContext());
+		((Button) findViewById(R.id.btnScan))
         	.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
@@ -56,11 +60,31 @@ public class ActivityBooks extends Activity {
 				}
 			});
         
-        dbHelper = DatabaseHelper.getDatabaseHelper(this.getApplicationContext());
-        
         booksList = (ListView)findViewById(R.id.listViewBooks);
+        refresh();
         
     }
+
+    public void refresh()
+    {
+    	final Vector<Book> books = dbHelper.getAllBooks();
+    	MyListViewAdapter listViewAdapter = new MyListViewAdapter(this, books);
+    	booksList.setAdapter(listViewAdapter);
+    	booksList.invalidate();
+    }
+    
+	@Override
+	protected void onDestroy() {
+		dbHelper.cleanup();
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		//refresh();
+	}
+    
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
@@ -72,8 +96,6 @@ public class ActivityBooks extends Activity {
             }
         }
     }
-    
-    
     private  AlertDialog showDownloadDialog() {
     	AlertDialog.Builder downloadDialog = new AlertDialog.Builder(this);
     	downloadDialog.setTitle("Install Barcode Scanner?");

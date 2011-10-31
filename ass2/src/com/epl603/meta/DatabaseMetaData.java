@@ -11,6 +11,7 @@ public class DatabaseMetaData {
 		public static final String DEFAULT_SORT_ORDER = "name ASC";
 		
 		// column names
+		public static final String _ID = "id";
 		public static final String NAME = "name";
 		public static final String URL = "url";
 		
@@ -24,6 +25,7 @@ public class DatabaseMetaData {
 		public static final String DEFAULT_SORT_ORDER = "title ASC";
 		
 		// column names
+		public static final String _ID = "id";
 		public static final String TITLE = "title";
 		public static final String AUTHORS = "authors";
 		public static final String ISBN = "isbn";
