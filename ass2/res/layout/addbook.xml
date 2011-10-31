@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:weightSum="1" android:layout_height="fill_parent" android:layout_width="fill_parent">
+    <TextView android:textAppearance="?android:attr/textAppearanceSmall" android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="wrap_content" android:text="Choose a Publisher"></TextView>
+    <Spinner 
+        android:id="@+id/spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Title"></TextView>
+    <EditText android:layout_height="wrap_content" android:id="@+id/editText1" android:layout_width="fill_parent">
+        <requestFocus></requestFocus>
+    </EditText>
+    <TextView android:textAppearance="?android:attr/textAppearanceSmall" android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="wrap_content" android:text="Authors"></TextView>
+    <EditText android:layout_height="wrap_content" android:id="@+id/editText2" android:layout_width="fill_parent"></EditText>
+    <TextView android:textAppearance="?android:attr/textAppearanceSmall" android:layout_height="wrap_content" android:id="@+id/textView3" android:layout_width="wrap_content" android:text="ISBN (13digit number)"></TextView>
+    <EditText android:layout_height="wrap_content" android:id="@+id/editText3" android:layout_width="fill_parent"></EditText>
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <Button android:layout_height="wrap_content" android:id="@+id/addbutton1" android:text="Add..." android:layout_width="wrap_content" android:layout_weight="1"></Button>
+        <Button android:layout_height="wrap_content" android:layout_width="wrap_content"  android:text="Cancel" android:id="@+id/cancelbutton2" android:layout_weight="1"></Button>
+    </LinearLayout>
+    
+</LinearLayout>
