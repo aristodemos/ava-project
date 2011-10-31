@@ -20,7 +20,7 @@ public class DatabaseMetaData {
 	public static final class BooksTableMetadata implements android.provider.BaseColumns {
 		private BooksTableMetadata() {}
 		
-		private static final String TABLE_NAME = "books";
+		public static final String TABLE_NAME = "books";
 		public static final String DEFAULT_SORT_ORDER = "title ASC";
 		
 		// column names

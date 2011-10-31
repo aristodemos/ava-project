@@ -4,7 +4,7 @@ public class Book {
 	private final String Title;
 	private final String Authors;
 	private final String ISBN;
-	private final int Publisher_id;
+	private final long Publisher_id;
 	
 	public Book(final String title, final String authors, final String ISBN, final int publisher_id)
 	{
@@ -26,7 +26,7 @@ public class Book {
 		return ISBN;
 	}
 
-	public int getPublisher_id() {
+	public long getPublisher_id() {
 		return Publisher_id;
 	}
 }
