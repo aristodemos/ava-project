@@ -82,7 +82,7 @@ public class ActivityBooks extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//refresh();
+		refresh();
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

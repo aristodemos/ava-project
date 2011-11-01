@@ -66,6 +66,9 @@ public class MyListViewAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
+		if (holder == null)
+			return convertView;
+		
 		Book b = books.get(position);
 		holder.txtTitle.setText(b.getTitle());
 		holder.txtAuthors.setText(b.getAuthors());
