@@ -39,7 +39,7 @@ public class JSONParser {
 				String attributeName = publishersObject.getString("name");
 				String attributeURL = publishersObject.getString("url");
 				
-				Publisher publisher = new Publisher(attributeName, attributeURL);
+				Publisher publisher = new Publisher(i, attributeName, attributeURL);
 				
 				JSONArray booksArray = publishersObject.getJSONArray("books");
 				for (int k=0; k<booksArray.length(); k++)

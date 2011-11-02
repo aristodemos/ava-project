@@ -1,5 +1,6 @@
 package com.epl603.meta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -157,10 +158,32 @@ public class DatabaseHelper {
 		{
 			final String name = cursor.getString(NAME_COLUMN_INDEX);
 			final String url = cursor.getString(URL_COLUMN_INDEX);
-			allPublishers.add(new Publisher(name, url));
+			allPublishers.add(new Publisher(i, name, url));
 			cursor.moveToNext();
 		}
 		return allPublishers;
+	}
+	
+	public ArrayList<String> getAllPublishersNames()
+	{
+		final ArrayList<String> allPublishersNames = new ArrayList<String>();
+		
+		final Cursor cursor = getDatabase().query(DatabaseMetaData.PublishersTableMetadata.TABLE_NAME, 
+				DatabaseMetaData.PublishersTableMetadata.ALL_COLUMNS,
+				"", null, "", "", DatabaseMetaData.PublishersTableMetadata.DEFAULT_SORT_ORDER);
+		
+		final int NAME_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.NAME);
+		final int URL_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.URL);
+		
+		cursor.moveToFirst();
+		for (int i=0; i<cursor.getCount(); i++)
+		{
+			final String name = cursor.getString(NAME_COLUMN_INDEX);
+			final String url = cursor.getString(URL_COLUMN_INDEX);
+			allPublishersNames.add(name);
+			cursor.moveToNext();
+		}
+		return allPublishersNames;
 	}
 	
 	public Book getBookByTitle(final String titleQuery)
@@ -204,10 +227,30 @@ public class DatabaseHelper {
 			cursor.moveToFirst();
 			final String name = cursor.getString(NAME_COLUMN_INDEX);
 			final String url = cursor.getString(URL_COLUMN_INDEX);
-			return new Publisher(name, url);
+			return new Publisher(cursor.getPosition(), name, url);
 		}
 		else
 			return null;
+	}
+	public int getPublisherByIdName(final String nameQuery)
+	{
+		final Cursor cursor = getDatabase().query(DatabaseMetaData.PublishersTableMetadata.TABLE_NAME, 
+				DatabaseMetaData.PublishersTableMetadata.ALL_COLUMNS,
+				DatabaseMetaData.PublishersTableMetadata.NAME + "='" + nameQuery + "'",
+				null, "", "", DatabaseMetaData.PublishersTableMetadata.DEFAULT_SORT_ORDER);
+		
+		final int NAME_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.NAME);
+		final int URL_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.URL);
+		
+		if (cursor.getCount() > 0)
+		{
+			cursor.moveToFirst();
+			final String name = cursor.getString(NAME_COLUMN_INDEX);
+			final String url = cursor.getString(URL_COLUMN_INDEX);
+			return cursor.getPosition();
+		}
+		else
+			return (Integer) null;
 	}
 	
 }

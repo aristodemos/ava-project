@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Button;
-import java.lang.Long;
 
 public class ActivityBooks extends Activity {
 		
@@ -91,8 +90,11 @@ public class ActivityBooks extends Activity {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
                 // Handle successful scan
+                setResult(RESULT_OK);
+                finish();
             } else if (resultCode == RESULT_CANCELED) {
-                // Handle cancel
+                finish();
+            	// Handle cancel
             }
         }
     }
