@@ -35,11 +35,12 @@ public class ActivityBooks extends Activity {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 	                Intent myIntent = new Intent(v.getContext(), AddBookActivity.class);
-	                startActivityForResult(myIntent, 0);					
+	                startActivityForResult(myIntent, 2);					
 				}
 			});
         
         this.dbHelper = DatabaseHelper.getDatabaseHelper(this.getApplicationContext());
+        
 		((Button) findViewById(R.id.btnScan))
         	.setOnClickListener(new View.OnClickListener() {
 				
@@ -48,10 +49,10 @@ public class ActivityBooks extends Activity {
 					// TODO Auto-generated method stub
 	                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 	                intent.setPackage("com.google.zxing.client.android");
-	                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+	                intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
 	                	
 	                try {
-	                	startActivityForResult(intent, 1);
+	                	startActivityForResult(intent, 5);
 	                   
 	                  } catch (ActivityNotFoundException e) {
 	                    showDownloadDialog();
@@ -85,17 +86,18 @@ public class ActivityBooks extends Activity {
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
+        if (requestCode == 5) {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
                 // Handle successful scan
                 setResult(RESULT_OK);
                 finish();
-            } else if (resultCode == RESULT_CANCELED) {
-                finish();
+            } else //if (resultCode == RESULT_CANCELED) {
+                {	//finish();
             	// Handle cancel
             }
+            
         }
     }
     private  AlertDialog showDownloadDialog() {

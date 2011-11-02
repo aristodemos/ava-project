@@ -1,15 +1,9 @@
 package com.epl603.assign2;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import com.epl603.classes.Publisher;
 import com.epl603.meta.DatabaseHelper;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
@@ -60,6 +54,7 @@ public class AddBookActivity extends Activity{
 							, authorText.getText().toString()
 							, isbnText.getText().toString()
 							, pub_id);
+				finish();
 				}
 			});
     }
