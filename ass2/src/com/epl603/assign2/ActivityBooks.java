@@ -27,6 +27,7 @@ public class ActivityBooks extends Activity {
 	private DatabaseHelper dbHelper;
 	private ListView booksList;
 	private static final int DELETE_ID = Menu.FIRST;
+	private  Vector<Book> books;
 	
     /** Called when the activity is first created. */
     @Override
@@ -74,7 +75,7 @@ public class ActivityBooks extends Activity {
 
     public void refresh()
     {
-    	final Vector<Book> books = dbHelper.getAllBooks();
+    	books = dbHelper.getAllBooks();
     	MyListViewAdapter listViewAdapter = new MyListViewAdapter(this, books);
     	booksList.setAdapter(listViewAdapter);
     	booksList.invalidate();
@@ -107,7 +108,9 @@ public class ActivityBooks extends Activity {
 			@SuppressWarnings("unused")
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			String bookTitle = dbHelper.findBookTitleById(info.position);
-			dbHelper.deleteBookByTitle(bookTitle);
+			Book book = (Book) booksList.getItemAtPosition(info.position);
+			String isbn = book.getISBN();
+			dbHelper.deleteBookByISBN(isbn);
 			//dbHelper.cleanup();
 			refresh();
 			return true;		

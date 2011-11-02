@@ -96,6 +96,12 @@ public class DatabaseHelper {
 				DatabaseMetaData.BooksTableMetadata.TITLE + "='" + title + "'", null);
 	}
 	
+	public void deleteBookByISBN(String isbn) {
+		// TODO Auto-generated method stub
+		getDatabase().delete(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, 
+				DatabaseMetaData.BooksTableMetadata.ISBN + "='" + isbn + "'", null);		
+	}
+	
 	public int deleteAllBooks()
 	{
 		return getDatabase().delete(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, "1", null);
@@ -272,5 +278,7 @@ public class DatabaseHelper {
 		else
 			return null;
 	}
+
+
 	
 }
