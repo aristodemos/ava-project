@@ -13,21 +13,28 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Button;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class ActivityBooks extends Activity {
 		
 	private static final String TAG = "ZXing exception";
 	private DatabaseHelper dbHelper;
 	private ListView booksList;
+	private static final int DELETE_ID = Menu.FIRST;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        registerForContextMenu(this.findViewById(R.id.listViewBooks));
+        
         ((Button) findViewById(R.id.btnAdd))
         	.setOnClickListener(new View.OnClickListener() {
 				
@@ -83,6 +90,29 @@ public class ActivityBooks extends Activity {
 	protected void onResume() {
 		super.onResume();
 		refresh();
+	}
+	
+    @Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
+		refresh();
+	}
+
+    @Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case DELETE_ID:
+			@SuppressWarnings("unused")
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			String bookTitle = dbHelper.findBookTitleById(info.position);
+			dbHelper.deleteBookByTitle(bookTitle);
+			//dbHelper.cleanup();
+			refresh();
+			return true;		
+		}
+    	return super.onContextItemSelected(item);
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

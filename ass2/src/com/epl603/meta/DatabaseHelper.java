@@ -252,5 +252,25 @@ public class DatabaseHelper {
 		else
 			return (Integer) null;
 	}
+
+	public String findBookTitleById(long id) {
+		final Cursor cursor = getDatabase().query(DatabaseMetaData.BooksTableMetadata.TABLE_NAME,
+				DatabaseMetaData.BooksTableMetadata.ALL_COLUMNS, 
+				DatabaseMetaData.BooksTableMetadata._ID+"='"+id+"'", 
+				null, "", "", DatabaseMetaData.BooksTableMetadata.DEFAULT_SORT_ORDER);
+		// TODO Auto-generated method stub
+		final int TITLE_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.BooksTableMetadata.TITLE);
+		
+		
+		if (cursor.getCount() > 0)
+		{
+			cursor.moveToFirst();
+			final String name = cursor.getString(TITLE_COLUMN_INDEX);
+			
+			return name;
+		}
+		else
+			return null;
+	}
 	
 }
