@@ -27,7 +27,7 @@
 	<EditText android:layout_height="wrap_content"
 		android:singleLine="true" android:inputType="number"
 		android:layout_width="fill_parent" android:id="@+id/isbnText"></EditText>
-	<LinearLayout android:id="@+id/linearLayout1"
+	<LinearLayout android:id="@+id/linearLayout1" android:paddingTop="20dp" android:paddingLeft="25dp" android:paddingRight="25dp" android:paddingBottom="10dp"
 		android:layout_width="fill_parent" android:layout_height="wrap_content">
 		<Button android:layout_height="wrap_content" android:id="@+id/addbutton1"
 			android:text="@string/add" android:layout_width="wrap_content"
