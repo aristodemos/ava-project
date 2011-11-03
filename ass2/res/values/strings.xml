@@ -2,8 +2,9 @@
 <resources>
     <string name="app_name">Books</string>
     <string name="add">Add</string>
+    <string name="addbook">Add Book</string>
+    <string name="cancel">Cancel</string>
     <string name="scan">Scan</string>
     <string name="unknown">Unkown !</string>
-    <string name="addbook">Add Book</string>
     <string name="menu_delete">Delete Book</string>
 </resources>

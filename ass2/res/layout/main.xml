@@ -10,7 +10,7 @@
 		<Button android:text="@string/scan" android:id="@+id/btnScan" android:layout_weight="1" 
 			android:layout_width="fill_parent" android:layout_height="wrap_content"></Button>
 	</LinearLayout>
-	<ListView android:layout_height="fill_parent" android:id="@+id/listViewBooks" android:layout_width="fill_parent"></ListView>
+	<ListView android:layout_height="fill_parent" android:id="@+id/listViewBooks" android:layout_width="fill_parent" android:scrollingCache="false"></ListView>
 
 
 </LinearLayout>

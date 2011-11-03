@@ -1,18 +1,17 @@
 package com.epl603.meta;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
-import com.epl603.classes.Book;
-import com.epl603.classes.Publisher;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.epl603.classes.Book;
+import com.epl603.classes.Publisher;
 
 public class DatabaseHelper {
 
@@ -79,7 +78,7 @@ public class DatabaseHelper {
 		this.insertBook(book.getTitle(), book.getAuthors(), book.getISBN(), book.getPublisher_id());
 	}
 	
-	public void insertBook(String title, String authors, String isbn, long publisher_id)
+	public long insertBook(String title, String authors, String isbn, long publisher_id)
 	{
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(DatabaseMetaData.BooksTableMetadata.TITLE, title);
@@ -87,7 +86,7 @@ public class DatabaseHelper {
 		contentValues.put(DatabaseMetaData.BooksTableMetadata.ISBN, isbn);
 		contentValues.put(DatabaseMetaData.BooksTableMetadata.PUBLISHER_ID, publisher_id);
 		
-		getDatabase().insert(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, null, contentValues);
+		return getDatabase().insert(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, null, contentValues);
 	}
 	
 	public void deleteBookByTitle(String title)
@@ -97,7 +96,6 @@ public class DatabaseHelper {
 	}
 	
 	public void deleteBookByISBN(String isbn) {
-		// TODO Auto-generated method stub
 		getDatabase().delete(DatabaseMetaData.BooksTableMetadata.TABLE_NAME, 
 				DatabaseMetaData.BooksTableMetadata.ISBN + "='" + isbn + "'", null);		
 	}
@@ -156,40 +154,20 @@ public class DatabaseHelper {
 				DatabaseMetaData.PublishersTableMetadata.ALL_COLUMNS,
 				"", null, "", "", DatabaseMetaData.PublishersTableMetadata.DEFAULT_SORT_ORDER);
 		
+		final int ID_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata._ID);
 		final int NAME_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.NAME);
 		final int URL_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.URL);
 		
 		cursor.moveToFirst();
 		for (int i=0; i<cursor.getCount(); i++)
 		{
+			final int id = cursor.getInt(ID_COLUMN_INDEX);
 			final String name = cursor.getString(NAME_COLUMN_INDEX);
 			final String url = cursor.getString(URL_COLUMN_INDEX);
-			allPublishers.add(new Publisher(i, name, url));
+			allPublishers.add(new Publisher(id, name, url));
 			cursor.moveToNext();
 		}
 		return allPublishers;
-	}
-	
-	public ArrayList<String> getAllPublishersNames()
-	{
-		final ArrayList<String> allPublishersNames = new ArrayList<String>();
-		
-		final Cursor cursor = getDatabase().query(DatabaseMetaData.PublishersTableMetadata.TABLE_NAME, 
-				DatabaseMetaData.PublishersTableMetadata.ALL_COLUMNS,
-				"", null, "", "", DatabaseMetaData.PublishersTableMetadata.DEFAULT_SORT_ORDER);
-		
-		final int NAME_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.NAME);
-		final int URL_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.URL);
-		
-		cursor.moveToFirst();
-		for (int i=0; i<cursor.getCount(); i++)
-		{
-			final String name = cursor.getString(NAME_COLUMN_INDEX);
-			final String url = cursor.getString(URL_COLUMN_INDEX);
-			allPublishersNames.add(name);
-			cursor.moveToNext();
-		}
-		return allPublishersNames;
 	}
 	
 	public Book getBookByTitle(final String titleQuery)
@@ -238,47 +216,5 @@ public class DatabaseHelper {
 		else
 			return null;
 	}
-	public int getPublisherByIdName(final String nameQuery)
-	{
-		final Cursor cursor = getDatabase().query(DatabaseMetaData.PublishersTableMetadata.TABLE_NAME, 
-				DatabaseMetaData.PublishersTableMetadata.ALL_COLUMNS,
-				DatabaseMetaData.PublishersTableMetadata.NAME + "='" + nameQuery + "'",
-				null, "", "", DatabaseMetaData.PublishersTableMetadata.DEFAULT_SORT_ORDER);
-		
-		final int NAME_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.NAME);
-		final int URL_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.PublishersTableMetadata.URL);
-		
-		if (cursor.getCount() > 0)
-		{
-			cursor.moveToFirst();
-			final String name = cursor.getString(NAME_COLUMN_INDEX);
-			final String url = cursor.getString(URL_COLUMN_INDEX);
-			return cursor.getPosition();
-		}
-		else
-			return (Integer) null;
-	}
-
-	public String findBookTitleById(long id) {
-		final Cursor cursor = getDatabase().query(DatabaseMetaData.BooksTableMetadata.TABLE_NAME,
-				DatabaseMetaData.BooksTableMetadata.ALL_COLUMNS, 
-				DatabaseMetaData.BooksTableMetadata._ID+"='"+id+"'", 
-				null, "", "", DatabaseMetaData.BooksTableMetadata.DEFAULT_SORT_ORDER);
-		// TODO Auto-generated method stub
-		final int TITLE_COLUMN_INDEX = cursor.getColumnIndex(DatabaseMetaData.BooksTableMetadata.TITLE);
-		
-		
-		if (cursor.getCount() > 0)
-		{
-			cursor.moveToFirst();
-			final String name = cursor.getString(TITLE_COLUMN_INDEX);
-			
-			return name;
-		}
-		else
-			return null;
-	}
-
-
 	
 }

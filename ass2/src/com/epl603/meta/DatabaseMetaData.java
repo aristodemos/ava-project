@@ -15,7 +15,7 @@ public class DatabaseMetaData {
 		public static final String NAME = "name";
 		public static final String URL = "url";
 		
-		public static final String [] ALL_COLUMNS = { NAME, URL };
+		public static final String [] ALL_COLUMNS = { _ID, NAME, URL };
 	}
 	
 	public static final class BooksTableMetadata implements android.provider.BaseColumns {
