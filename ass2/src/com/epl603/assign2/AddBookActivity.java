@@ -49,7 +49,16 @@ public class AddBookActivity extends Activity {
 		String authors = getIntent().getStringExtra("authors");
 		String title = getIntent().getStringExtra("title");
 		String isbn = getIntent().getStringExtra("ISBN");
+		String msg = getIntent().getStringExtra("msg");
 
+		if (msg!=null && msg.compareTo("invalid_query")==0){
+			finish();
+		}
+		else if (msg!=null && msg.compareTo("io_fail")==0){
+			ShowAlertMessage("Warning", "I/O Fail - No internet connection");
+			//
+		}
+		
 		boolean publisherFound = false;
 		if (publisher != null && publisher.length() > 0) {
 			publisherFound = selectSpinnerValue(publisher);

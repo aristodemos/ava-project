@@ -19,6 +19,7 @@ public class IncomingReceiver extends BroadcastReceiver {
 			String authors = "";
 			String ISBN = "";
 			String title = "";
+			String msg = "";
 			
 			String result = intent
 					.getStringExtra("epl603.assignment2.EXTRA_LOOKUP_RESULT");
@@ -30,6 +31,14 @@ public class IncomingReceiver extends BroadcastReceiver {
 				ISBN = intent.getStringExtra("epl603.assignment2.EXTRA_BOOK_ISBN");
 				title = intent.getStringExtra("epl603.assignment2.EXTRA_BOOK_TITLE");
 			}
+			else if(result
+					.compareTo("epl603.assignment2.EXTRA_LOOKUP_RESULT_INVALID_QUERY") == 0)
+			{
+			msg="invalid_query";
+			}
+			else if (result.compareTo("epl603.assignment2.EXTRA_LOOKUP_RESULT_IO_FAIL")==0){
+				msg="io_fail";
+			}
 			
 			Intent myIntent = new Intent(context, AddBookActivity.class);
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -37,6 +46,7 @@ public class IncomingReceiver extends BroadcastReceiver {
 			myIntent.putExtra("authors", authors);
 			myIntent.putExtra("ISBN", ISBN);
 			myIntent.putExtra("title", title);
+			myIntent.putExtra("msg", msg);
 			context.startActivity(myIntent);
 
 			Log.d("BOOOOOOOK", publisher + " " + authors + " " + ISBN + " " + title);
