@@ -64,10 +64,14 @@ public class MyListViewAdapter extends BaseAdapter {
 		else
 		{
 			holder = (ViewHolder) convertView.getTag();
+			if (holder == null)
+			{
+				holder = new ViewHolder();
+				holder.txtTitle = (TextView) convertView.findViewById(R.id.txt1);
+				holder.txtAuthors = (TextView) convertView.findViewById(R.id.txt2);
+				holder.txtISBN = (TextView) convertView.findViewById(R.id.txt3);
+			}
 		}
-		
-		if (holder == null)
-			return convertView;
 		
 		Book b = books.get(position);
 		holder.txtTitle.setText(b.getTitle());

@@ -49,10 +49,10 @@ public class AddBookActivity extends Activity {
 		String authors = getIntent().getStringExtra("authors");
 		String title = getIntent().getStringExtra("title");
 		String isbn = getIntent().getStringExtra("ISBN");
-		String msg = getIntent().getStringExtra("msg");
+		final String msg = getIntent().getStringExtra("msg");
 
 		if (msg!=null && msg.compareTo("invalid_query")==0){
-			finish();
+			ShowAlertMessage("Warning", "Invalid Query - Ci n'est pas un livre");
 		}
 		else if (msg!=null && msg.compareTo("io_fail")==0){
 			ShowAlertMessage("Warning", "I/O Fail - No internet connection");
@@ -112,11 +112,15 @@ public class AddBookActivity extends Activity {
 				});
 	}
 
-	private void ShowAlertMessage(String title, String msg) {
+
+	private void ShowAlertMessage(String title, final String msg) {
 		new AlertDialog.Builder(this).setTitle(title).setMessage(msg)
 				.setPositiveButton("OK", new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						//if (msg.length()>0 && msg.compareTo("io_fail")==0){
+							AddBookActivity.this.finish();
+						//}
 					}
 				}).show();
 	}
@@ -149,4 +153,5 @@ public class AddBookActivity extends Activity {
 
 		spinner.setAdapter(adapter);
 	}
+
 }
