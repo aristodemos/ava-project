@@ -2,6 +2,7 @@ package com.epl603.ava.classes;
 
 import java.util.ArrayList;
 
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -9,8 +10,6 @@ import android.util.Log;
 
 public class PointPath extends Path{
 	public ArrayList<TranslatedPoint> points;
-	//public float dx = 0;
-	//public float dy = 0;
 	
 	public PointPath()
 	{
@@ -34,6 +33,11 @@ public class PointPath extends Path{
 	//	addPoint(x, y, 0, 0, 1);
 	//}
 	
+	public void addPoint(float x, float y)
+	{
+		addPoint(x, y, 0, 0, 1, false);
+	}
+	
 	public void addPoint(float x, float y, float dx, float dy, float scale)
 	{
 		addPoint(x, y, dx, dy, scale, false);
@@ -41,12 +45,12 @@ public class PointPath extends Path{
 	
 	public void addPoint(float x, float y, float dx, float dy, float scale, boolean isBreak)
 	{
-		if (isBreak)
+		/*if (isBreak)
 		{
 			int a;
 			a = 4;
 			a++;
-		}
+		}*/
 		
 		if (scale == 0)
 			scale = 1;
@@ -63,18 +67,26 @@ public class PointPath extends Path{
 		}
 	
 		this.lineTo((x-dx)/scale, (y-dy)/scale);
-		points.add(new TranslatedPoint((x+dx)*scale, (y+dy)*scale, dx, dy, scale, isBreak));
-		
-		//this.dx = dx;
-		//this.dy = dy;
+		points.add(new TranslatedPoint((x-dx)/scale, (y-dy)/scale, dx, dy, scale, isBreak));
+
 	}
 	
-	public void RemoveLastPoint()
+	@Override
+	public void close() {
+		if (points.size() > 0)
+		{
+			points.get(points.size()-1).isClosing = true;
+			super.close();
+		}
+	}
+
+	// returns false if the point list is empty
+	public boolean RemoveLastPoint()
 	{
 		//points.remove(getPointsCount()-1);
 		
 		if (getPointsCount() == 0)
-			return;
+			return false;
 		
 		while (true)
 		{			
@@ -89,19 +101,28 @@ public class PointPath extends Path{
 		this.reset();
 		
 		if (getPointsCount() == 0)
-			return;
+			return true;
 		
 		TranslatedPoint pt = points.get(0);
+		//pt.postMatrix(matrix);
 		
-		this.moveTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
+		/*this.moveTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
 		Log.d("START_POINT", points.get(0).x + ", " + points.get(0).y);
 		for (int i=1; i<getPointsCount(); i++)
 		{
 			pt = points.get(i);
 			this.lineTo((pt.x - pt.dx - pt.dx)/pt.scale/pt.scale, (pt.y - pt.dy - pt.dy)/pt.scale/pt.scale);
 			//Log.d("MID_POINT", points.get(0).x + ", " + points.get(0).y);
-		}
+		}*/
 		
+		this.moveTo(pt.x, pt.y);
+		for (int i=1; i<getPointsCount(); i++)
+		{
+			pt = points.get(i);
+			this.lineTo(pt.x, pt.y);
+		}
+
+		return true;
 	}
 	
 	public TranslatedPoint getPoint(int index)
@@ -130,6 +151,7 @@ public class PointPath extends Path{
 			dx = 0;
 			dy = 0;
 			scale = 1;
+			isClosing = false;
 		}
 		
 		public TranslatedPoint(float x, float y, float dx, float dy, float scale)
@@ -144,13 +166,25 @@ public class PointPath extends Path{
 			this.dy = dy;
 			this.scale = scale;
 			this.isBreak = breaks;
+			this.isClosing = false;
 		}
 		
+		public void postMatrix(Matrix matrix)
+		{
+			float[] values = new float[9];
+			matrix.getValues(values);
+			
+			this.dx += values[Matrix.MTRANS_X];
+			this.dy += values[Matrix.MTRANS_Y];
+			this.scale *= values[Matrix.MSCALE_X];
+		}
 	
 		public float scale;
 		public float dx;
 		public float dy;
 		public boolean isBreak;
+		public boolean isClosing;
+		
 	}
 
 }

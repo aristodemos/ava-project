@@ -174,6 +174,7 @@ public class DrawActivity extends Activity {
 					}
 	
 	}
+	
 	public void loadRoi() {
 		// TODO Auto-generated method stub
 		

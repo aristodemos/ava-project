@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
 import android.util.Xml;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -40,9 +42,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private Bitmap mBitMap = BitmapFactory.decodeFile(BioMedActivity
 			.getSelectedImagePath());
 
-	/*final float MAX_ZOOM = 4F;
-	final float MIN_ZOOM = 1F;*/
-	
 	private Paint mPaint;
 	public boolean isDrawMode;
 	public int currentPathIndex = 0;
@@ -50,25 +49,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public boolean pointsChange = false;
 
 	private Matrix matrix = new Matrix();
-	//private PointF matrix_translate = new PointF(0, 0);
-	//private PointF start_translate = new PointF(0, 0);
-	//private float scaleFactor = 1;
 	private PointF mid = new PointF();
 	private float oldDist = 1f;
-	//private boolean isZoom = false;
 	private float scale = 1F;
-
-	/*private int screenHeight;
-	private int screenWidth;
-	private int bitmapHeight;
-	private int bitmapWidth;*/
+	private float minScale = 0.5F;
+	private float maxScale = 6F;
 
 	private static final String TAG = "Touch";
-	// These matrices will be used to move and zoom image
-	// private Matrix matrix = new Matrix();
 	private Matrix savedMatrix = new Matrix();
-	//private Bitmap image;
-	// private File imageFile;
 
 	// We can be in one of these 3 states
 	static final int NONE = 0;
@@ -100,9 +88,9 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public ArrayList<PointPath> save_graphics() {
-	
+
 		return _graphics;
-	
+
 	}
 
 	public void set_graphics(ArrayList<PointPath> _graphics) {
@@ -117,22 +105,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		((WindowManager) this.getContext().getSystemService(
 				Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(
 				displaymetrics);
-		
-		//RectF src = new RectF(0, 0, mBitMap.getWidth(), mBitMap.getHeight());
-		//RectF dst = new RectF(0, 0, this.getWidth(), this.getHeight());
-		
-		//matrix.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
-		
-		/*screenHeight = displaymetrics.heightPixels;
-		screenWidth = displaymetrics.widthPixels;
-
-		bitmapHeight = mBitMap.getHeight();
-		bitmapWidth = mBitMap.getWidth();*/
-
-		// Display display = ((WindowManager)
-		// this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		// screenHeight = display.getHeight();
-		// screenWidth = display.getWidth();
 
 		initializePaint();
 	}
@@ -167,9 +139,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		currentPathIndex++;
 		pointsChange = true;
 	}
-	
-	public void NextPath()
-	{
+
+	public void NextPath() {
 		if (_graphics.size() == currentPathIndex
 				|| _graphics.get(currentPathIndex) == null) {
 			return;
@@ -181,10 +152,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		synchronized (_thread.getSurfaceHolder()) {
 
 			boolean isBreakPoint = false;
-			
-			if (!isDrawMode) {
-				// dumpEvent(event);
 
+			if (!isDrawMode) {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
 					savedMatrix.set(matrix);
@@ -209,77 +178,75 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 					if (xDiff < 15 && yDiff < 15) {
 						performClick();
 					}
-					/*if (mode == DRAG) {
-						matrix_translate.x += event.getX() - start.x;
-						matrix_translate.y += event.getY() - start.y;
-					}
-					else 
-					{
-						scaleFactor += scale; 
-					}*/
-					//TranslateROIs();
 					pointsChange = true;
 				case MotionEvent.ACTION_POINTER_UP:
 					mode = NONE;
 					Log.d(TAG, "mode=NONE");
 					break;
 				case MotionEvent.ACTION_MOVE:
-					float[] arr = new float[9]; 	// translate : x,y : [2],[5]
-					matrix.getValues(arr);	
-					
+					float[] arr = new float[9]; // translate : x,y : [2],[5]
+					matrix.getValues(arr);
+
 					if (mode == DRAG) {
-						
-						/*boolean x_boundReached = false;
-						boolean y_boundReached = false;
-						if (arr[2] < (mBitMap.getWidth() - this.getWidth()) * -1)
-						{
-							x_boundReached = true;	
-						}
-						if (arr[5] < (mBitMap.getHeight() - this.getHeight()) * -1)
-						{
-							y_boundReached = true;	
-						}*/
-						
 						matrix.set(savedMatrix);
-						//float x_offset = event.getX() - start.x;
+						// float x_offset = event.getX() - start.x;
 						matrix.postTranslate(event.getX() - start.x,
 								event.getY() - start.y);
-						
-						
-											
+
 					} else if (mode == ZOOM) {
 						float newDist = spacing(event);
 						Log.d(TAG, "newDist=" + newDist);
 						if (newDist > 10f) {
 							matrix.set(savedMatrix);
 							scale = newDist / oldDist;
-							
-							/*matrix.getValues(arr);
-							
-							if (scale + arr[4] == MAX_ZOOM || scale + arr[4] > MAX_ZOOM)
-							{
-								matrix.postScale(MAX_ZOOM - arr[4], MAX_ZOOM - arr[4], mid.x, mid.y);
-							}
-							else if (scale + arr[4] == MIN_ZOOM || scale + arr[4] < MIN_ZOOM)
-							{
-								matrix.postScale(MIN_ZOOM + arr[4], MAX_ZOOM - arr[4], mid.x, mid.y);
-							}
-							else*/								
+
+							float currentScale = arr[Matrix.MSCALE_X];
+							if (currentScale * scale < minScale) {
+								matrix.postScale(minScale / currentScale,
+										minScale / currentScale, mid.x, mid.y);
+							} else if (currentScale * scale > maxScale) {
+								matrix.postScale(maxScale / currentScale,
+										maxScale / currentScale, mid.x, mid.y);
+							} else {
 								matrix.postScale(scale, scale, mid.x, mid.y);
+							}
+
+							// matrix.postScale(scale, scale, mid.x, mid.y);
 						}
 					}
-					
+
+					int screenHeight = this.getHeight();
+					int screenWidth = this.getWidth();
+
 					matrix.getValues(arr);
-					if (arr[2] > 0)
-					{
-						matrix.postTranslate(arr[2]*(-1), 0);
+					if (arr[Matrix.MTRANS_X] > 0) {
+						matrix.postTranslate(arr[Matrix.MTRANS_X] * (-1), 0);
+
 					}
-					if (arr[5] > 0)
-					{
-						matrix.postTranslate(0, arr[5]*(-1));
+					if (arr[Matrix.MTRANS_Y] > 0) {
+						matrix.postTranslate(0, arr[Matrix.MTRANS_Y] * (-1));
+
 					}
-					
-					//TranslateROIs();
+
+					float maxTranslateX = (Math.max(
+							(mBitMap.getWidth() * arr[Matrix.MSCALE_X]),
+							screenWidth) - screenWidth)
+							* (-1);
+					float maxTranslateY = (Math.max(
+							(mBitMap.getHeight() * arr[Matrix.MSCALE_Y]),
+							screenHeight) - screenHeight)
+							* (-1);
+
+					if (arr[Matrix.MTRANS_X] < maxTranslateX) {
+						matrix.postTranslate(
+								(maxTranslateX - arr[Matrix.MTRANS_X]), 0);
+					}
+					if (arr[Matrix.MTRANS_Y] < maxTranslateY) {
+						matrix.postTranslate(0,
+								(maxTranslateY - arr[Matrix.MTRANS_Y]));
+
+					}
+
 					pointsChange = true;
 					break;
 				}
@@ -289,6 +256,9 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 			pointsChange = true;
 
+			if (currentPathIndex < 0)
+				currentPathIndex = 0;
+			
 			if (currentPathIndex > _graphics.size() - 1) {
 				_graphics.add(new PointPath());
 			}
@@ -301,48 +271,50 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 			if (event.getAction() == MotionEvent.ACTION_UP)
 				isBreakPoint = true;
-			
-			//myPath.addPoint(event.getX(), event.getY());
-			
-			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
+
+			// myPath.addPoint(event.getX(), event.getY());
+
+			// myPath.addPoint(event.getX(), event.getY(), matrix_translate.x,
+			// matrix_translate.y, matrix.MSCALE_X);
 			float[] arr = new float[9];
 			matrix.getValues(arr);
-			//myPath.addPoint(event.getX(), event.getY(), matrix_translate.x, matrix_translate.y, matrix.MSCALE_X);
-			myPath.addPoint(event.getX(), event.getY(), arr[2], arr[5], arr[0], isBreakPoint);
+			// myPath.addPoint(event.getX(), event.getY(), matrix_translate.x,
+			// matrix_translate.y, matrix.MSCALE_X);
+			
+			myPath.addPoint(event.getX(), event.getY(), arr[Matrix.MTRANS_X],
+				arr[Matrix.MTRANS_Y], arr[Matrix.MSCALE_X], isBreakPoint);
 			_graphics.remove(currentPathIndex);
 			_graphics.add(myPath);
 			return true;
 		}
 	}
 
-	/*private void TranslateROIs() {
-		
-		ArrayList<PointPath> newPaths = new ArrayList<PointPath>();
-	//	int x=220; int y = 220;
-		for (PointPath path : _graphics) {
-			ArrayList<Point> pts = new ArrayList<Point>();
-			PointPath newPath = new PointPath();
-			for (Point p : path.points) {
-				
-				//Point tp = new Point((int)(p.x + matrix_translate.x), (int)(p.y + matrix_translate.y));
-				//Point tp = new Point(x, y); x++; y++;
-				//pts.add(tp);
-				newPath.addPoint(p.x + matrix_translate.x, p.y + matrix_translate.y);
-				//Log.d("point", "(" + p.x + ", " + p.y + ")");
-			}
-			newPaths.add(newPath);
-		}
-		_graphics = newPaths;
-		pointsChange = true;
-		this.invalidate();
-	}*/
+	/*
+	 * private void TranslateROIs() {
+	 * 
+	 * ArrayList<PointPath> newPaths = new ArrayList<PointPath>(); // int x=220;
+	 * int y = 220; for (PointPath path : _graphics) { ArrayList<Point> pts =
+	 * new ArrayList<Point>(); PointPath newPath = new PointPath(); for (Point p
+	 * : path.points) {
+	 * 
+	 * //Point tp = new Point((int)(p.x + matrix_translate.x), (int)(p.y +
+	 * matrix_translate.y)); //Point tp = new Point(x, y); x++; y++;
+	 * //pts.add(tp); newPath.addPoint(p.x + matrix_translate.x, p.y +
+	 * matrix_translate.y); //Log.d("point", "(" + p.x + ", " + p.y + ")"); }
+	 * newPaths.add(newPath); } _graphics = newPaths; pointsChange = true;
+	 * this.invalidate(); }
+	 */
 
 	/** Determine the space between the first two fingers */
 	private float spacing(MotionEvent event) {
 		// ...
-		float x = event.getX(0) - event.getX(1);
-		float y = event.getY(0) - event.getY(1);
-		return FloatMath.sqrt(x * x + y * y);
+		try {
+			float x = event.getX(0) - event.getX(1);
+			float y = event.getY(0) - event.getY(1);
+			return FloatMath.sqrt(x * x + y * y);
+		} catch (Exception ex) {
+			return 0;
+		}
 	}
 
 	/** Calculate the mid point of the first two fingers */
@@ -364,10 +336,10 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 		for (PointPath path : _graphics) {
 			Path trPath = new Path();
-			//path.offset(matrix_translate.x, matrix_translate.y, trPath);
+			// path.offset(matrix_translate.x, matrix_translate.y, trPath);
 			path.transform(matrix, trPath);
-			
-			canvas.drawPath(trPath, mPaint); 
+
+			canvas.drawPath(trPath, mPaint);
 		}
 		pointsChange = false;
 	}
@@ -424,43 +396,49 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		mPaint.setStrokeWidth(3);
 	}
 
-	/** Show an event in the LogCat view, for debugging */
-	private void dumpEvent(MotionEvent event) {
-		String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
-				"POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
-		StringBuilder sb = new StringBuilder();
-		int action = event.getAction();
-		int actionCode = action & MotionEvent.ACTION_MASK;
-		sb.append("event ACTION_").append(names[actionCode]);
-		if (actionCode == MotionEvent.ACTION_POINTER_DOWN
-				|| actionCode == MotionEvent.ACTION_POINTER_UP) {
-			sb.append("(pid ").append(
-					action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
-			sb.append(")");
-		}
-		sb.append("[");
-		for (int i = 0; i < event.getPointerCount(); i++) {
-			sb.append("#").append(i);
-			sb.append("(pid ").append(event.getPointerId(i));
-			sb.append(")=").append((int) event.getX(i));
-			sb.append(",").append((int) event.getY(i));
-			if (i + 1 < event.getPointerCount())
-				sb.append(";");
-		}
-		sb.append("]");
-		Log.d("dumpEvent", sb.toString());
-	}
-
 	public void UndoLastPoint() {
-		if (_graphics.get(currentPathIndex) != null)
+		if (currentPathIndex < 0)
+			return;
+		
+		if (!(_graphics.size() > currentPathIndex))
 		{
-			_graphics.get(currentPathIndex).RemoveLastPoint();
+			currentPathIndex--;
+		}
+		if (_graphics.size() > currentPathIndex) //(_graphics.get(currentPathIndex) != null) 
+		{
+			//int index = (_graphics.get(currentPathIndex).points.size() > 0) ? currentPathIndex
+			//		: currentPathIndex - 1;
+			boolean has_more = _graphics.get(currentPathIndex).RemoveLastPoint();
+			if (!has_more)
+			{
+				_graphics.remove(currentPathIndex);
+				currentPathIndex--;
+			}
+			
 			pointsChange = true;
 		}
+		/*else 
+		{
+			currentPathIndex--;
+		}*/
 	}
 
-
-
-	
+	/** Show an event in the LogCat view, for debugging */
+	/*
+	 * private void dumpEvent(MotionEvent event) { String names[] = { "DOWN",
+	 * "UP", "MOVE", "CANCEL", "OUTSIDE", "POINTER_DOWN", "POINTER_UP", "7?",
+	 * "8?", "9?" }; StringBuilder sb = new StringBuilder(); int action =
+	 * event.getAction(); int actionCode = action & MotionEvent.ACTION_MASK;
+	 * sb.append("event ACTION_").append(names[actionCode]); if (actionCode ==
+	 * MotionEvent.ACTION_POINTER_DOWN || actionCode ==
+	 * MotionEvent.ACTION_POINTER_UP) { sb.append("(pid ").append( action >>
+	 * MotionEvent.ACTION_POINTER_ID_SHIFT); sb.append(")"); } sb.append("[");
+	 * for (int i = 0; i < event.getPointerCount(); i++) {
+	 * sb.append("#").append(i);
+	 * sb.append("(pid ").append(event.getPointerId(i));
+	 * sb.append(")=").append((int) event.getX(i)); sb.append(",").append((int)
+	 * event.getY(i)); if (i + 1 < event.getPointerCount()) sb.append(";"); }
+	 * sb.append("]"); Log.d("dumpEvent", sb.toString()); }
+	 */
 
 }
