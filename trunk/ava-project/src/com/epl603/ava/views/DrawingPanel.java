@@ -44,6 +44,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 	private Paint mPaint;
 	public boolean isDrawMode;
+	public boolean isFlagMode;
 	public int currentPathIndex = 0;
 	private boolean isCleanRequest = true;
 	public boolean pointsChange = false;
@@ -121,6 +122,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public void exitDrawMode() {
 		isDrawMode = false;
 	}
+	
+	public void switchFlagMode(boolean enabled)
+	{
+		isFlagMode = enabled;
+	}
 
 	public void ClearROIs() {
 		_graphics = new ArrayList<PointPath>();
@@ -153,6 +159,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 			boolean isBreakPoint = false;
 
+			if (isFlagMode)
+			{
+				
+			}
+			
 			if (!isDrawMode) {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
