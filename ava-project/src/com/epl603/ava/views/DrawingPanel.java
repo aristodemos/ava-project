@@ -1,7 +1,5 @@
 package com.epl603.ava.views;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.RectF;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
