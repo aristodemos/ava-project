@@ -9,6 +9,8 @@ public class FlagPair {
 	public boolean isPaired = false;
 	private Path path;
 	private float density;
+	
+	private final int cross_side_size = 6;
 
 	public FlagPair()
 	{
@@ -35,12 +37,43 @@ public class FlagPair {
 	public void setFinish(float finish_x, float finish_y) {
 		this.finish = new PointF(finish_x, finish_y);
 		path.reset();
-		path.moveTo(start.x+24*density, start.y+24*density);
-		path.lineTo(finish_x+24*density, finish_y+24*density);
+		path.moveTo(start.x/*+cross_side_size/2*density*/, start.y/*+cross_side_size/2*density*/);
+		path.lineTo(finish_x/*+cross_side_size/2*density*/, finish_y/*+cross_side_size/2*density*/);
 	}
 	public Path getPath() {
 		return path;
 	}
+	
+	public Path getStartCrossPath()
+	{
+		float left_x = start.x-cross_side_size/2*density;
+		float right_x = start.x+cross_side_size/2*density;
+		float top_y = start.y-cross_side_size/2*density;
+		float bottom_y = start.y+cross_side_size/2*density;
+		
+		Path p = new Path();
+		p.moveTo(left_x, top_y);
+		p.lineTo(right_x, bottom_y);
+		p.moveTo(left_x, bottom_y);
+		p.lineTo(right_x, top_y);
+		return p;
+	}
+	
+	public Path getFinishCrossPath()
+	{
+		float left_x = finish.x-cross_side_size/2*density;
+		float right_x = finish.x+cross_side_size/2*density;
+		float top_y = finish.y-cross_side_size/2*density;
+		float bottom_y = finish.y+cross_side_size/2*density;
+		
+		Path p = new Path();
+		p.moveTo(left_x, top_y);
+		p.lineTo(right_x, bottom_y);
+		p.moveTo(left_x, bottom_y);
+		p.lineTo(right_x, top_y);
+		return p;
+	}
+	
 	public void setPath(Path path) {
 		this.path = path;
 	}
