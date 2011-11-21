@@ -18,11 +18,9 @@ import org.xml.sax.XMLReader;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -31,6 +29,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
@@ -42,8 +42,8 @@ import com.epl603.ava.views.DrawingPanel;
 
 public class DrawActivity extends Activity {
 
-	Context _context;
-	private static String xmlPath;
+	//Context _context;
+	private static String xmlPath = null;
 	private DrawingPanel roi_panel;
 	FrameLayout mainView;
 
@@ -75,6 +75,15 @@ public class DrawActivity extends Activity {
 					roi_panel.exitDrawMode();
 				}
 				
+			}
+		});
+		
+		final ToggleButton togglebuttonFlag = (ToggleButton) findViewById(R.id.togglebutton_flag);
+		togglebuttonFlag.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				roi_panel.switchFlagMode(isChecked);
 			}
 		});
 
