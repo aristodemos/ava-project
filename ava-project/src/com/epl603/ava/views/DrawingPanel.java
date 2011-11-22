@@ -115,10 +115,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		initializeView();
 	}
 
-	public ArrayList<PointPath> save_graphics() {
-
+	public ArrayList<PointPath> getPointPaths() {
 		return _pointPaths;
-
 	}
 
 	public void set_graphics(ArrayList<PointPath> _graphics) {
