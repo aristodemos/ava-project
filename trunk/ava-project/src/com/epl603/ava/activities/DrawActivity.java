@@ -129,8 +129,7 @@ public class DrawActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_SAVE:
-			//TODO: save points using getROIpoints method(aris)
-			save_graphics(roi_panel.save_graphics());
+			saveToXML();
 			return true;
 		case MENU_PAUSE_DRAW:
 			roi_panel.exitDrawMode();
@@ -166,10 +165,19 @@ public class DrawActivity extends Activity {
 	  super.onConfigurationChanged(newConfig);
 	  //setContentView(R.layout.main);
 	}
-	public void save_graphics(ArrayList<PointPath> _graphics) {
+	public void saveToXML() {
+		
+		ArrayList<PointPath> _graphics = roi_panel.getPointPaths();
 		
 		//create a new file called "new.xml" in the SD card
-        File newxmlfile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BioMedActivity.getImageName() +".xml");
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MedImagePro";
+		
+		File folder = new File(path);
+		if (!folder.exists())
+		{
+			folder.mkdir();
+		}
+        File newxmlfile = new File(path + File.separator + BioMedActivity.getImageName() +".xml");
         try{
                 newxmlfile.createNewFile();
         }catch(IOException e){
@@ -230,7 +238,6 @@ public class DrawActivity extends Activity {
 	
 	}
 	public void loadRoi() {
-		// TODO Auto-generated method stub
 		Intent intent = new Intent();
 		intent.setType("text/plain");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -238,6 +245,7 @@ public class DrawActivity extends Activity {
 				"Select XML to load ROIs from"), SELECT_XML);
 
 	}
+	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_XML) {
@@ -247,6 +255,7 @@ public class DrawActivity extends Activity {
             }
         }     
     }
+	
 	public ArrayList<PointPath> getPoints(final String path) throws
 		ParserConfigurationException, SAXException, IOException
 		{
