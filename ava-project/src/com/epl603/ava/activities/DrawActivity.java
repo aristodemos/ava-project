@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
@@ -54,36 +55,45 @@ public class DrawActivity extends Activity {
 	private final int MENU_CLEAR = 4;
 	private final int MENU_SAVE = 5;
 	private final int MENU_NEXT = 6;
-	private static final int SELECT_XML = 7; 
+	private static final int SELECT_XML = 7;
+	private final int MENU_UNDO_FLAG = 8;
 
+	ToggleButton togglebuttonFlag;
+	ToggleButton togglebuttonDraw;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draw);
 
 		mainView = (FrameLayout) findViewById(R.id.mainLayout);
 		roi_panel = (DrawingPanel) findViewById(R.id.roiPanel);
 		
-		final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
-		togglebutton.setOnClickListener(new OnClickListener() {
+		togglebuttonDraw = (ToggleButton) findViewById(R.id.togglebutton);
+		togglebuttonDraw.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				//perform actions on clicks
-				if (togglebutton.isChecked()){
+				if (togglebuttonDraw.isChecked()){
 					roi_panel.enterDrawMode();
+					togglebuttonFlag.setChecked(false);
 				} else {
 					roi_panel.exitDrawMode();
 				}
-				
 			}
 		});
 		
-		final ToggleButton togglebuttonFlag = (ToggleButton) findViewById(R.id.togglebutton_flag);
+		togglebuttonFlag = (ToggleButton) findViewById(R.id.togglebutton_flag);
 		togglebuttonFlag.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				roi_panel.switchFlagMode(isChecked);
+				if (isChecked)
+					togglebuttonDraw.setChecked(false);
 			}
 		});
 
@@ -92,8 +102,12 @@ public class DrawActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-
-		if (roi_panel.isDrawMode) {
+		
+		if (roi_panel.isFlagMode)
+		{
+			menu.add(0, MENU_UNDO_FLAG, 0, R.string.undo_flag);
+		}
+		else if (roi_panel.isDrawMode) {
 			menu.add(0, MENU_CLOSE_ROI, 0, R.string.close_ROI);
 			menu.add(0, MENU_NEXT, 0, R.string.next);
 			menu.add(0, MENU_UNDO, 0, R.string.undo);
@@ -130,6 +144,9 @@ public class DrawActivity extends Activity {
 		case MENU_UNDO:
 			roi_panel.UndoLastPoint();
 			return true;
+		case MENU_UNDO_FLAG:
+			roi_panel.UndoLastFlag();
+			return true;
 		}
 		return false;
 	}
@@ -139,9 +156,9 @@ public class DrawActivity extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// when orientation changes
-	  super.onConfigurationChanged(newConfig);
 	  roi_panel.pointsChange = true;
 	  roi_panel.invalidate();
+	  super.onConfigurationChanged(newConfig);
 	  //setContentView(R.layout.main);
 	}
 	public void save_graphics(ArrayList<PointPath> _graphics) {

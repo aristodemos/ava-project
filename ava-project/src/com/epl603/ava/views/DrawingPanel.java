@@ -1,6 +1,7 @@
 package com.epl603.ava.views;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -42,6 +43,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private Bitmap target_img = BitmapFactory.decodeResource(getResources(),
 			R.drawable.target);
 
+	Random random = new Random();
+
 	// private Bitmap cross_img = BitmapFactory.decodeResource(getResources(),
 	// R.drawable.cross);
 
@@ -56,18 +59,27 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	private static final float minScale = 0.5F;
 	private static final float maxScale = 6F;
 
+	private static final float textHeight = 15;
+
 	private static final String TAG = "Touch";
 
 	// //////////////////////////////////
 
+	private int ROIColor = 0xFFFFFF00;
+	private int TextColor = 0xFFFFFF00;
+	private int FlagColor = 0xFF93cd5f;
+	private float ppm = 2.6520F; // 3.7723F;
+
 	private Paint mPaint;
 	private Paint mPaintCrosses;
 	private Paint mPaintDistance;
+	private Paint mPaintText;
+
 	public boolean isDrawMode;
 	public boolean isFlagMode;
 	// private boolean isZooming = false;
 	private boolean isCleanRequest = true;
-	public boolean pointsChange = false;
+	public boolean pointsChange;// = false;
 	private boolean targetDown = false;
 
 	private Matrix matrix = new Matrix();
@@ -82,15 +94,19 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	int mode = NONE;
 	float density;
 
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		pointsChange = true;
+	}
+
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
 		initializeView();
 	}
 
 	public DrawingPanel(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
 		initializeView();
 	}
 
@@ -119,6 +135,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				displaymetrics);
 
 		density = displaymetrics.density;
+		
+		pointsChange = false;
 
 		initializePaint();
 	}
@@ -185,19 +203,21 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 					if (_flagPairs.size() == 0
 							|| _flagPairs.get(_flagPairs.size() - 1).isPaired) {
-						_flagPairs.add(new FlagPair(event.getX()
-						/*- (TARGET_SIZE / 2) * density*/, event.getY()
+						_flagPairs.add(new FlagPair(event.getX(), event.getY()
 								- (TARGET_PADDING / 2 - TARGET_SIZE / 2)
-								* density, density));
+								* density, density, matrix));
+
+						_flagPairs.get(_flagPairs.size() - 1).setColor(random);
 					} else {
 						_flagPairs
 								.get(_flagPairs.size() - 1)
 								.setFinish(
-										event.getX() /*- (TARGET_SIZE / 2) * density*/,
+										event.getX(),
 										event.getY()
 												- (TARGET_PADDING / 2 - TARGET_SIZE / 2)
-												* density);
-						_flagPairs.get(_flagPairs.size() - 1).isPaired = true;
+												* density, matrix);
+
+						_flagPairs.get(_flagPairs.size() - 1).Pair();
 					}
 
 					targetDown = false;
@@ -206,6 +226,19 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 					targetMatrix.setTranslate(event.getX() - (TARGET_SIZE / 2)
 							* density, event.getY() - (TARGET_PADDING / 2)
 							* density);
+
+					if (_flagPairs.size() > 0
+							&& !_flagPairs.get(_flagPairs.size() - 1).isPaired) {
+						_flagPairs
+								.get(_flagPairs.size() - 1)
+								.setFinish(
+										event.getX(),
+										event.getY()
+												- (TARGET_PADDING / 2 - TARGET_SIZE / 2)
+												* density, matrix);
+						
+						_flagPairs.get(_flagPairs.size()-1).CalculateDistance();
+					}
 					break;
 				}
 
@@ -410,18 +443,36 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			Path p = fp.getStartCrossPath();
 			Path trp = new Path();
 			p.transform(matrix, trp);
+			mPaintCrosses.setColor(fp.getColor());
 			canvas.drawPath(trp, mPaintCrosses);
 
-			if (fp.isPaired) {
+			if (fp.getFinish() != null) {
 				p = fp.getPath();
 				trp = new Path();
 				p.transform(matrix, trp);
+				mPaintDistance.setColor(fp.getColor());
 				canvas.drawPath(trp, mPaintDistance);
-				// canvas.drawBitmap(cross_img, helperDrawMatrix, null);
 
+				mPaintText.setColor(fp.getColor());
+				canvas.drawText(
+						Double.toString(Math.round(fp.getDistanceInPixels()
+								* ppm * 100) / 10000.0) + " cm", 0, this.getHeight()
+								- textHeight * density * i,
+						mPaintText);
+			}
+
+			if (fp.isPaired) {
 				p = fp.getFinishCrossPath();
 				p.transform(matrix, trp);
 				canvas.drawPath(trp, mPaintCrosses);
+
+//				mPaintText.setColor(fp.getColor());
+//				canvas.drawText(
+//						Double.toString(Math.round(fp.getDistanceInPixels()
+//								* ppm * 100) / 10000.0), 10, this.getHeight()
+//								- textHeight * (i + 1),
+//						mPaintText);
+				// canvas.drawTe
 			}
 		}
 		pointsChange = false;
@@ -472,15 +523,15 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		// initialize paint
 		mPaint = new Paint();
 		mPaint.setDither(true);
-		mPaint.setColor(0xFFFFFF00);
+		mPaint.setColor(ROIColor);
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeJoin(Paint.Join.ROUND);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
-		mPaint.setStrokeWidth(3);
+		mPaint.setStrokeWidth(2);
 
 		mPaintDistance = new Paint();
 		mPaintDistance.setDither(true);
-		mPaintDistance.setColor(0xFF93cd5f);
+		mPaintDistance.setColor(FlagColor);
 		mPaintDistance.setStyle(Paint.Style.STROKE);
 		mPaintDistance.setStrokeJoin(Paint.Join.ROUND);
 		mPaintDistance.setStrokeCap(Paint.Cap.ROUND);
@@ -490,11 +541,20 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 		mPaintCrosses = new Paint();
 		mPaintCrosses.setDither(true);
-		mPaintCrosses.setColor(0xFF93cd5f);
+		mPaintCrosses.setColor(FlagColor);
 		mPaintCrosses.setStyle(Paint.Style.STROKE);
 		mPaintCrosses.setStrokeJoin(Paint.Join.ROUND);
 		mPaintCrosses.setStrokeCap(Paint.Cap.ROUND);
 		mPaintCrosses.setStrokeWidth(4);
+
+		mPaintText = new Paint();
+		mPaintText.setDither(true);
+		mPaintText.setColor(TextColor);
+		mPaintText.setStyle(Paint.Style.FILL_AND_STROKE);
+		mPaintText.setStrokeJoin(Paint.Join.ROUND);
+		mPaintText.setStrokeCap(Paint.Cap.ROUND);
+		mPaintText.setStrokeWidth(1);
+		mPaintText.setTextSize(20);
 	}
 
 	public void UndoLastPoint() {
@@ -522,6 +582,20 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		/*
 		 * else { currentPathIndex--; }
 		 */
+	}
+
+	public void UndoLastFlag() {
+		if (_flagPairs.size() == 0)
+			return;
+
+		FlagPair fp = _flagPairs.get(_flagPairs.size() - 1);
+
+		if (fp.isPaired) {
+			fp.ClearFinish();
+		} else
+			_flagPairs.remove(fp);
+
+		pointsChange = true;
 	}
 
 	/** Show an event in the LogCat view, for debugging */
