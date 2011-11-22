@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
@@ -22,6 +23,7 @@ public class BioMedActivity extends Activity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ((Button) findViewById(R.id.mloadButton))

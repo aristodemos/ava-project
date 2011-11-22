@@ -36,15 +36,15 @@
 	<!-- </LinearLayout> -->
 	<!-- </LinearLayout> -->
 	
-	<ToggleButton android:id="@+id/togglebutton_flag"
+	<ToggleButton android:id="@+id/togglebutton_flag" android:background="@drawable/btn_toggle"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:textOn="Flag Mode" android:textOff="Flag Mode"
-		android:layout_gravity="left" />
+		android:textOn="Flag mode" android:textOff="Flag mode"
+		android:layout_gravity="left" android:layout_marginTop="10dp" />
 
-	<ToggleButton android:id="@+id/togglebutton"
+	<ToggleButton android:id="@+id/togglebutton" android:background="@drawable/btn_toggle"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:textOn="Draw Mode" android:textOff="Draw Mode"
-		android:layout_gravity="right" />
+		android:textOn="Draw mode" android:textOff="Draw mode"
+		android:layout_gravity="right" android:layout_marginTop="10dp" />
 	
 
 </FrameLayout>

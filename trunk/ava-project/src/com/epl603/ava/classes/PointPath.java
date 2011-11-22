@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.util.Log;
 
 public class PointPath extends Path{
 	public ArrayList<TranslatedPoint> points;
@@ -43,14 +42,7 @@ public class PointPath extends Path{
 	}
 	
 	public void addPoint(float x, float y, float dx, float dy, float scale, boolean isBreak)
-	{
-		/*if (isBreak)
-		{
-			int a;
-			a = 4;
-			a++;
-		}*/
-		
+	{		
 		if (scale == 0)
 			scale = 1;
 		
