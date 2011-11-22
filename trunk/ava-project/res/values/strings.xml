@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, StartActivity!</string>
-    <string name="app_name">BioMed</string>
+    <string name="app_name">MED Image Pro</string>
     
 	<!--     menu 		-->
     <string name="draw_roi">Draw Mode</string>
