@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
@@ -66,6 +67,7 @@ public class DrawActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draw);
@@ -93,7 +95,10 @@ public class DrawActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				roi_panel.switchFlagMode(isChecked);
 				if (isChecked)
+				{
 					togglebuttonDraw.setChecked(false);
+					roi_panel.exitDrawMode();
+				}
 			}
 		});
 
