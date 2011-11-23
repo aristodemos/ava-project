@@ -108,6 +108,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			pointsChange = true;
 		}		
 	}
+	
+	
 
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -122,6 +124,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public DrawingPanel(Context context) {
 		super(context);
 		initializeView();
+	}
+
+	public int getCurrentPathIndex() {
+		return currentPathIndex;
+	}
+
+	public void setCurrentPathIndex(int currentPathIndex) {
+		this.currentPathIndex = currentPathIndex;
 	}
 
 	public ArrayList<PointPath> getPointPaths() {
@@ -611,6 +621,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public void clearFlags() {
 		_flagPairs.clear();
 		pointsChange = true;		
+	}
+
+	public void setFlagPairsDensity() {
+		for (int i=0; i<_flagPairs.size(); i++)
+		{
+			_flagPairs.get(i).setDensity(density);
+		}
+		
 	}
 
 	/** Show an event in the LogCat view, for debugging */

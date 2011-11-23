@@ -8,6 +8,7 @@ import android.graphics.PointF;
 
 public class PointPath extends Path{
 	public ArrayList<TranslatedPoint> points;
+	public int isClosed;
 	
 	public PointPath()
 	{
@@ -24,6 +25,7 @@ public class PointPath extends Path{
 		{
 			this.lineTo(pts.get(i).x, pts.get(i).y);
 		}
+		
 	}
 	
 	//public void addPoint(float x, float y)
@@ -67,6 +69,7 @@ public class PointPath extends Path{
 		if (points.size() > 0)
 		{
 			points.get(points.size()-1).isClosing = true;
+			this.isClosed = -1;
 			super.close();
 		}
 	}

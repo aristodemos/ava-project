@@ -13,6 +13,7 @@ public class FlagPair {
 	public boolean isPaired = false;
 	private Path path;
 	private float density;
+	
 	private double distanceInPixels;
 	private int color = 0xFF93cd5f;
 	
@@ -20,7 +21,7 @@ public class FlagPair {
 
 	public FlagPair()
 	{
-		
+		path = new Path();
 	}
 	
 	public FlagPair(float start_x, float start_y, float _density, Matrix matrix)
@@ -103,6 +104,9 @@ public class FlagPair {
 	public void setColor(Random rnd) {
 		this.color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
 	}
+	public void setColor(int color) {
+		this.color = color;
+	}
 
 	public Path getPath() {
 		return path;
@@ -149,5 +153,14 @@ public class FlagPair {
 	public void setPath(Path path) {
 		this.path = path;
 	}
+	
+	public float getDensity() {
+		return density;
+	}
+
+	public void setDensity(float density) {
+		this.density = density;
+	}
+
 	
 }

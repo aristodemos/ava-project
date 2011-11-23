@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +19,7 @@ import org.xml.sax.XMLReader;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
@@ -39,6 +41,7 @@ import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
 import com.epl603.ava.R;
+import com.epl603.ava.classes.FlagPair;
 import com.epl603.ava.classes.DrawStorage;
 import com.epl603.ava.classes.PointPath;
 import com.epl603.ava.classes.XMLParser;
@@ -47,7 +50,7 @@ import com.epl603.ava.views.DrawingPanel;
 
 public class DrawActivity extends Activity {
 
-	//Context _context;
+	Context _context;
 	private static String xmlPath = null;
 	private DrawingPanel roi_panel;
 	FrameLayout mainView;
@@ -113,9 +116,12 @@ public class DrawActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
-		roi_panel.setPointPaths(DrawStorage.getStorage().getPaths());
+		ArrayList<PointPath> paths = DrawStorage.getStorage().getPaths();
+		roi_panel.setPointPaths(paths);
 		roi_panel.setFlagPairs(DrawStorage.getStorage().getPairs());
+		roi_panel.setFlagPairsDensity();
+		roi_panel.setCurrentPathIndex(paths.size());
+		roi_panel.pointsChange = true;
 		super.onResume();
 	}
 
@@ -235,7 +241,7 @@ public class DrawActivity extends Activity {
 	public void saveToXML() {
 		
 		ArrayList<PointPath> _graphics = roi_panel.getPointPaths();
-		
+		ArrayList<FlagPair> _flagPairs = roi_panel.getFlagPairs();
 		//create a new file called "new.xml" in the SD card
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MedImagePro";
 		
@@ -267,31 +273,57 @@ public class DrawActivity extends Activity {
                         //set indentation option
                         serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
                         //start a tag called "image_name"
-                        serializer.startTag("", "image:");
-                        serializer.attribute("", "filepath", BioMedActivity.getSelectedImagePath());
-                        serializer.endTag("", "image:");
+                        //serializer.startTag("", "image:");
+                        //serializer.attribute("", "filepath", BioMedActivity.getSelectedImagePath());
+                        //serializer.endTag("", "image:");
                         //i indent code just to have a view similar to xml-tree
-                             serializer.startTag("", "ROIs");
+                        serializer.startTag("", "medImage");     
+                        	serializer.startTag("", "ROIs");
 							 for (PointPath myPath : _graphics) {   
 								serializer.startTag("", "roi");
 								
 								for (PointF p : myPath.points){
-									serializer.startTag("", "Point");
-										serializer.startTag("", "x");
-											serializer.attribute("", "", ""+p.x);
-										serializer.endTag("", "x");
+									serializer.startTag("", "point");
+										//serializer.startTag("", "xxx");
+											serializer.attribute("", "xxx", Float.toString(p.x));
+										//serializer.endTag("", "xxx");
 										
-										serializer.startTag("", "y");
-											serializer.attribute("", "", ""+p.y);
-										serializer.endTag("", "y");
+										//serializer.startTag("", "yy");
+											serializer.attribute("", "yy", Float.toString(p.y));
+										//serializer.endTag("", "yy");
 										
-										serializer.endTag("", "Point");
+										serializer.endTag("", "point");
 								}		
-								
 								serializer.endTag("", "roi");
+								
+								serializer.startTag("", "isClosed");
+									serializer.attribute("", "isClosed", Integer.toString(myPath.isClosed));
+								serializer.endTag("", "isClosed");
+								
+								
 							}	
 								serializer.endTag("", "ROIs"); 	
-                        
+								serializer.startTag("", "flagPairs");
+									for (FlagPair myFlagPairs : _flagPairs){
+										serializer.startTag("", "pair");
+										serializer.startTag("", "start");
+											serializer.attribute("", "sx", Float.toString(myFlagPairs.getStart().x));
+											serializer.attribute("", "sy", Float.toString(myFlagPairs.getStart().y));
+										serializer.endTag("", "start");
+										serializer.startTag("", "color");
+											serializer.attribute("", "color", Integer.toString(myFlagPairs.getColor()));
+										serializer.endTag("", "color");
+										serializer.startTag("", "distance");	
+											serializer.attribute("", "distance", Double.toString(myFlagPairs.getDistanceInPixels()));
+										serializer.endTag("", "distance");
+										serializer.startTag("", "finish");
+										serializer.attribute("", "fx", Float.toString(myFlagPairs.getFinish().x));
+										serializer.attribute("", "fy", Float.toString(myFlagPairs.getFinish().y));
+									serializer.endTag("", "finish");
+										serializer.endTag("", "pair");
+									}
+								serializer.endTag("", "flagPairs");
+                        serializer.endTag("", "medImage");
                         serializer.endDocument();
                         //write xml data into the FileOutputStream
                         serializer.flush();
@@ -306,10 +338,10 @@ public class DrawActivity extends Activity {
 	}
 	public void loadRoi() {
 		Intent intent = new Intent();
-		intent.setType("text/plain");
+		intent.setType("text/xml");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
 		startActivityForResult(Intent.createChooser(intent, 
-				"Select XML to load ROIs from"), SELECT_XML);
+				"Select XML"), SELECT_XML);
 
 	}
 	
@@ -318,27 +350,33 @@ public class DrawActivity extends Activity {
             if (requestCode == SELECT_XML) {
                xmlPath = data.getData().getPath();
                try {
-				getPoints(xmlPath);
-			} catch (ParserConfigurationException e) {
+				//
+            	   getPoints(xmlPath);
+				//DrawStorage.getStorage().setPaths(myPaths);
+				//roi_panel.setPointPaths(myPaths);
+				/*
+				roi_panel.setCurrentPathIndex(myPaths.size());
+				roi_panel.pointsChange=true;*/
+			} catch (ParserConfigurationException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
+				e1.printStackTrace();
+			} catch (SAXException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-               
+				e1.printStackTrace();
+			}             
             }
         }     
     }
 	
-	public ArrayList<PointPath> getPoints(final String path) throws
+	public void getPoints(final String path) throws
 		ParserConfigurationException, SAXException, IOException
 		{
 			BufferedReader br = new BufferedReader(new FileReader(path));
 			InputSource is = new InputSource(br);
+			//URL sourceXML = new URL(path);
 			XMLParser parser = new XMLParser();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser sp=factory.newSAXParser();
@@ -346,9 +384,9 @@ public class DrawActivity extends Activity {
 			reader.setContentHandler(parser);
 			reader.parse(is);
 			ArrayList<PointPath> xmlRoi = parser.roiPaths;
-			return xmlRoi;
-		
+			ArrayList<FlagPair> xmlFlagPair = parser.flags;
+			DrawStorage.getStorage().setPaths(xmlRoi);
+			DrawStorage.getStorage().setPairs(xmlFlagPair);			
 		}
-
-
+	
 }
