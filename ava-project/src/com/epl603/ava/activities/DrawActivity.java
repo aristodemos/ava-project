@@ -21,10 +21,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +39,7 @@ import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
 import com.epl603.ava.R;
+import com.epl603.ava.classes.DrawStorage;
 import com.epl603.ava.classes.PointPath;
 import com.epl603.ava.classes.XMLParser;
 import com.epl603.ava.views.DrawingPanel;
@@ -58,6 +61,7 @@ public class DrawActivity extends Activity {
 	private final int MENU_NEXT = 6;
 	private static final int SELECT_XML = 7;
 	private final int MENU_UNDO_FLAG = 8;
+	private final int MENU_SHARE = 9;
 
 	ToggleButton togglebuttonFlag;
 	ToggleButton togglebuttonDraw;
@@ -68,12 +72,15 @@ public class DrawActivity extends Activity {
 		
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+				
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draw);
 
 		mainView = (FrameLayout) findViewById(R.id.mainLayout);
 		roi_panel = (DrawingPanel) findViewById(R.id.roiPanel);
+		
+		roi_panel.setPointPaths(DrawStorage.getStorage().getPaths());
+		roi_panel.setFlagPairs(DrawStorage.getStorage().getPairs());
 		
 		togglebuttonDraw = (ToggleButton) findViewById(R.id.togglebutton);
 		togglebuttonDraw.setOnClickListener(new OnClickListener() {
@@ -105,6 +112,32 @@ public class DrawActivity extends Activity {
 	}
 
 	@Override
+	protected void onDestroy() {
+		
+		DrawStorage.getStorage().setPairs(roi_panel.getFlagPairs());
+		DrawStorage.getStorage().setPaths(roi_panel.getPointPaths());
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+	
+	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		
@@ -120,6 +153,7 @@ public class DrawActivity extends Activity {
 		} else {
 			menu.add(0, MENU_SAVE, 0, R.string.save_rois);
 			menu.add(0, MENU_LOAD_ROI, 0, R.string.load_roi);
+			menu.add(0, MENU_SHARE, 0, R.string.share);
 		}
 
 		return super.onPrepareOptionsMenu(menu);
@@ -151,8 +185,32 @@ public class DrawActivity extends Activity {
 		case MENU_UNDO_FLAG:
 			roi_panel.UndoLastFlag();
 			return true;
+		case MENU_SHARE:
+			ShareData();
+			return true;
 		}
 		return false;
+	}
+	
+	private void ShareData()
+	{
+		saveToXML();
+		
+		Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+		share.setType("text/html");
+
+	/*	share.putExtra(Intent.EXTRA_STREAM,
+				  Uri.parse("file:///sdcard/MedImagePro/" + BioMedActivity.getImageName() + ".xml"));
+		
+		share.putExtra(Intent.EXTRA_STREAM,
+				  Uri.parse("file:///sdcard/MedImagePro/" + BioMedActivity.getImageName() + ".BMP"));
+*/
+		ArrayList<Uri> uris = new ArrayList<Uri>();
+		uris.add(Uri.parse("file:///sdcard/MedImagePro/" + BioMedActivity.getImageName() + ".BMP"));
+		uris.add(Uri.parse("file:///sdcard/MedImagePro/" + BioMedActivity.getImageName() + ".xml"));
+		share.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uris);
+		
+		startActivityForResult(Intent.createChooser(share, "Share File"), 0);
 	}
 	
 	//aris - method to output arraylist of ROI points to XML
@@ -165,6 +223,16 @@ public class DrawActivity extends Activity {
 	  super.onConfigurationChanged(newConfig);
 	  //setContentView(R.layout.main);
 	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) 
+	    {
+	        roi_panel.ChangeLastFlagColor();
+	        return true;
+	    }
+		return super.onKeyDown(keyCode, event);
+	}
+
 	public void saveToXML() {
 		
 		ArrayList<PointPath> _graphics = roi_panel.getPointPaths();
@@ -250,7 +318,18 @@ public class DrawActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_XML) {
                xmlPath = data.getData().getPath();
-               //getPoints(xmlPath);
+               try {
+				getPoints(xmlPath);
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
                
             }
         }     
