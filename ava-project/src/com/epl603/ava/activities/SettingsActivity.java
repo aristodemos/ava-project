@@ -94,7 +94,7 @@ public class SettingsActivity extends Activity {
 				throw new Exception();
 			}
 			finish();
-			Toast.makeText(this, "Settings are saved..", Toast.LENGTH_LONG).show(); 
+			Toast.makeText(this, "Settings saved.", Toast.LENGTH_LONG).show(); 
 			
 		} catch (Exception ex) {
 			CreateAlert("Pixel per milimeter should be more than 0.");

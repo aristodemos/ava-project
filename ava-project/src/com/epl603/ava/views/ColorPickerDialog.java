@@ -96,18 +96,19 @@ public class ColorPickerDialog extends Dialog {
         private static final int CENTER_Y = 100;
         private static final int CENTER_RADIUS = 32;
 
-        private int floatToByte(float x) {
+        /*private int floatToByte(float x) {
             int n = java.lang.Math.round(x);
             return n;
-        }
-        private int pinToByte(int n) {
+        }*/
+        
+        /*private int pinToByte(int n) {
             if (n < 0) {
                 n = 0;
             } else if (n > 255) {
                 n = 255;
             }
             return n;
-        }
+        }*/
 
         private int ave(int s, int d, float p) {
             return s + java.lang.Math.round(p * (d - s));
@@ -136,7 +137,7 @@ public class ColorPickerDialog extends Dialog {
             return Color.argb(a, r, g, b);
         }
 
-        private int rotateColor(int color, float rad) {
+        /*private int rotateColor(int color, float rad) {
             float deg = rad * 180 / 3.1415927f;
             int r = Color.red(color);
             int g = Color.green(color);
@@ -159,7 +160,7 @@ public class ColorPickerDialog extends Dialog {
 
             return Color.argb(Color.alpha(color), pinToByte(ir),
                               pinToByte(ig), pinToByte(ib));
-        }
+        }*/
 
         private static final float PI = 3.1415926f;
 
