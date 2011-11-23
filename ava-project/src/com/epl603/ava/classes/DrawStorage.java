@@ -28,7 +28,7 @@ public class DrawStorage {
 		this.paths = paths;
 	}
 	
-	public DrawStorage() {
+	private DrawStorage() {
 		paths = new ArrayList<PointPath>();
 		pairs = new ArrayList<FlagPair>();
 	}
