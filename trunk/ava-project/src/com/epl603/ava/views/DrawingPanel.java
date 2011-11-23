@@ -17,7 +17,6 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -488,12 +487,12 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		// TODO Auto-generated method stub
-
+		
+		pointsChange = true;
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
+
 		if (_thread.isAlive()) {
 
 		} else {
@@ -510,7 +509,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
+
 		boolean retry = true;
 		_thread.setRunning(false);
 		while (retry) {

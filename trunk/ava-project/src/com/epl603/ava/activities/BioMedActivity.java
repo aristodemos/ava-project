@@ -15,9 +15,6 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.epl603.ava.classes.DrawStorage;
-import com.epl603.ava.views.*;
-
 public class BioMedActivity extends Activity {
 
 	private static final int SELECT_PICTURE = 1;
