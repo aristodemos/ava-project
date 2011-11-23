@@ -118,6 +118,9 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public ArrayList<PointPath> getPointPaths() {
 		return _pointPaths;
 	}
+	public ArrayList<FlagPair> getFlagPairs() {
+		return _flagPairs;
+	}
 
 	public void set_graphics(ArrayList<PointPath> _graphics) {
 		this._pointPaths = _graphics;
