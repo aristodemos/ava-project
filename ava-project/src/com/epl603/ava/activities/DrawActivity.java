@@ -80,8 +80,7 @@ public class DrawActivity extends Activity {
 		mainView = (FrameLayout) findViewById(R.id.mainLayout);
 		roi_panel = (DrawingPanel) findViewById(R.id.roiPanel);
 		
-		roi_panel.setPointPaths(DrawStorage.getStorage().getPaths());
-		roi_panel.setFlagPairs(DrawStorage.getStorage().getPairs());
+		
 		
 		togglebuttonDraw = (ToggleButton) findViewById(R.id.togglebutton);
 		togglebuttonDraw.setOnClickListener(new OnClickListener() {
@@ -110,6 +109,14 @@ public class DrawActivity extends Activity {
 			}
 		});
 
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		roi_panel.setPointPaths(DrawStorage.getStorage().getPaths());
+		roi_panel.setFlagPairs(DrawStorage.getStorage().getPairs());
+		super.onResume();
 	}
 
 	@Override
