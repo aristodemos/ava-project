@@ -62,9 +62,9 @@ public class ColorPickerDialog extends Dialog {
 
         @Override
         protected void onDraw(Canvas canvas) {
-            float r = CENTER_X - mPaint.getStrokeWidth()*0.5f;
+            float r = CENTER_X - mPaint.getStrokeWidth();
 
-            canvas.translate(CENTER_X*1.5F, CENTER_Y);
+            canvas.translate(CENTER_X, CENTER_Y);
 
             canvas.drawOval(new RectF(-r, -r, r, r), mPaint);
             canvas.drawCircle(0, 0, CENTER_RADIUS, mCenterPaint);
@@ -89,11 +89,11 @@ public class ColorPickerDialog extends Dialog {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            setMeasuredDimension(CENTER_X*3, CENTER_Y*2);
+            setMeasuredDimension(CENTER_X*2, CENTER_Y*2);
         }
 
         private static final int CENTER_X = 100;
-        private static final int CENTER_Y = 120;
+        private static final int CENTER_Y = 100;
         private static final int CENTER_RADIUS = 32;
 
         private int floatToByte(float x) {

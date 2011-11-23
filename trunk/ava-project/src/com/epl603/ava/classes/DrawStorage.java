@@ -40,4 +40,10 @@ public class DrawStorage {
 		
 		return storage;
 	}
+	
+	public void clearStorage()
+	{
+		paths.clear();
+		pairs.clear();
+	}
 }

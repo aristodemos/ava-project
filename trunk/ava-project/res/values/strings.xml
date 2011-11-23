@@ -12,7 +12,6 @@
 	<string name="next">Next ROI</string>
 	<string name="undo_flag">Remove last</string>
     <string name="share">Share</string>
-    
     <string name="ok">Ok</string>
     <string name="save_rois">Save ROIs</string>
     <string name="load_roi">Load ROIs</string>
