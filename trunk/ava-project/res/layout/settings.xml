@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="250dp"
+	android:layout_height="fill_parent">
+
+	<LinearLayout android:id="@+id/linearLayout1"
+		android:paddingTop="10dp" android:paddingLeft="10dp"
+		android:paddingRight="10dp" android:weightSum="2"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:orientation="horizontal">
+		<TextView android:text="Draw Color:" android:id="@+id/textView1"
+			android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></TextView>
+		<Button android:text="" android:id="@+id/colorChooser"
+			android:layout_weight="1" android:background="#FFFFFF"
+			android:layout_width="fill_parent" android:layout_height="40dp"></Button>
+
+		<!-- <EditText android:layout_height="wrap_content" android:text="" -->
+		<!-- android:layout_weight="1" android:id="@+id/editText1" android:background="#FFFF00" -->
+		<!-- android:layout_width="fill_parent"></EditText> -->
+
+	</LinearLayout>
+
+
+	<LinearLayout android:id="@+id/linearLayout2"
+		android:paddingTop="10dp" android:paddingLeft="10dp"
+		android:paddingRight="10dp" android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:orientation="horizontal">
+		<TextView android:text="Pixels per mm:" android:id="@+id/textView2"
+			android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></TextView>
+		<!-- <com.epl603.ava.views.ColorPickerDialog android:layout_width="fill_parent" -->
+		<!-- android:layout_height="wrap_content"></com.epl603.ava.views.ColorPickerDialog> -->
+
+		<EditText android:layout_height="wrap_content" android:text=""
+			android:layout_weight="1" android:id="@+id/edtPPM" android:inputType="numberDecimal"
+			android:maxLines="1" android:layout_width="fill_parent"></EditText>
+
+
+	</LinearLayout>
+
+
+
+	<LinearLayout android:id="@+id/linearLayout3"
+		android:paddingTop="20dp" android:paddingLeft="10dp"
+		android:paddingRight="10dp" android:paddingBottom="10dp"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:orientation="horizontal">
+		<Button android:text="Save" android:id="@+id/btnSaveSet"
+			android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></Button>
+		<Button android:text="Cancel" android:id="@+id/btnCancelSet"
+			android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></Button>
+	</LinearLayout>
+
+
+</LinearLayout>

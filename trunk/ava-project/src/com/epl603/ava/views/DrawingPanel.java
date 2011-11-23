@@ -17,6 +17,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,6 +25,7 @@ import android.view.WindowManager;
 
 import com.epl603.ava.R;
 import com.epl603.ava.activities.BioMedActivity;
+import com.epl603.ava.classes.DrawSettings;
 import com.epl603.ava.classes.DrawingThread;
 import com.epl603.ava.classes.FlagPair;
 import com.epl603.ava.classes.PointPath;
@@ -100,6 +102,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		pointsChange = true;
 	}
 
+	public void ChangeLastFlagColor() {
+		if (_flagPairs.size() > 0)
+		{
+			_flagPairs.get(_flagPairs.size()-1).setColor(random);
+			pointsChange = true;
+		}		
+	}
+
 	public DrawingPanel(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initializeView();
@@ -118,11 +128,16 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	public ArrayList<PointPath> getPointPaths() {
 		return _pointPaths;
 	}
+	
 	public ArrayList<FlagPair> getFlagPairs() {
 		return _flagPairs;
 	}
+	
+	public void setFlagPairs(ArrayList<FlagPair> flagpairs) {
+		_flagPairs = flagpairs;
+	}
 
-	public void set_graphics(ArrayList<PointPath> _graphics) {
+	public void setPointPaths(ArrayList<PointPath> _graphics) {
 		this._pointPaths = _graphics;
 	}
 
@@ -521,6 +536,9 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	private void initializePaint() {
+		
+		ROIColor = DrawSettings.getDrawColor(this.getContext());
+		
 		// initialize paint
 		mPaint = new Paint();
 		mPaint.setDither(true);

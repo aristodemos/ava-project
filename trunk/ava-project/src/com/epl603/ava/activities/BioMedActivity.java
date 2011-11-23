@@ -15,6 +15,8 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.epl603.ava.views.*;
+
 public class BioMedActivity extends Activity {
 
 	private static final int SELECT_PICTURE = 1;
@@ -42,12 +44,22 @@ public class BioMedActivity extends Activity {
 				});
 
 		((Button) findViewById(R.id.mExitButton))
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						finish();
-					}
-				});
+		.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				finish();
+			}
+		});
+		
+		((Button) findViewById(R.id.mSettingsButton))
+		.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				startSettingsActivity();
+			}
+		});
+		
+		
 		// ((Button) findViewById(R.id.mEditButton))
 		// .setOnClickListener(new View.OnClickListener(){
 		// @Override
@@ -61,6 +73,13 @@ public class BioMedActivity extends Activity {
 
 	}
 
+	public void startSettingsActivity()
+	{
+		startActivity(new Intent(this, SettingsActivity.class));
+		//ColorPickerDialog dlg = new ColorPickerDialog(this);
+		//dlg.show();
+	}
+	
 	public static String getSelectedImagePath() {
 		return selectedImagePath;
 	}
