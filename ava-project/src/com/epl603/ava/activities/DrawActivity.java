@@ -62,6 +62,7 @@ public class DrawActivity extends Activity {
 	private static final int SELECT_XML = 7;
 	private final int MENU_UNDO_FLAG = 8;
 	private final int MENU_SHARE = 9;
+	private final int MENU_CLEAR_FLAGS = 10;
 
 	ToggleButton togglebuttonFlag;
 	ToggleButton togglebuttonDraw;
@@ -118,24 +119,6 @@ public class DrawActivity extends Activity {
 		DrawStorage.getStorage().setPaths(roi_panel.getPointPaths());
 		super.onDestroy();
 	}
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -144,6 +127,7 @@ public class DrawActivity extends Activity {
 		if (roi_panel.isFlagMode)
 		{
 			menu.add(0, MENU_UNDO_FLAG, 0, R.string.undo_flag);
+			menu.add(0, MENU_CLEAR_FLAGS, 0, R.string.clear);
 		}
 		else if (roi_panel.isDrawMode) {
 			menu.add(0, MENU_CLOSE_ROI, 0, R.string.close_ROI);
@@ -188,6 +172,9 @@ public class DrawActivity extends Activity {
 		case MENU_SHARE:
 			ShareData();
 			return true;
+		case MENU_CLEAR_FLAGS:
+			roi_panel.clearFlags();
+			return true;
 		}
 		return false;
 	}
@@ -230,6 +217,11 @@ public class DrawActivity extends Activity {
 	        roi_panel.ChangeLastFlagColor();
 	        return true;
 	    }
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			DrawStorage.getStorage().clearStorage();
+			return super.onKeyDown(keyCode, event);
+		}
 		return super.onKeyDown(keyCode, event);
 	}
 

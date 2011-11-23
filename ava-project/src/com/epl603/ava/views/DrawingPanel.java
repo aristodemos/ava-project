@@ -481,14 +481,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				p = fp.getFinishCrossPath();
 				p.transform(matrix, trp);
 				canvas.drawPath(trp, mPaintCrosses);
-
-//				mPaintText.setColor(fp.getColor());
-//				canvas.drawText(
-//						Double.toString(Math.round(fp.getDistanceInPixels()
-//								* ppm * 100) / 10000.0), 10, this.getHeight()
-//								- textHeight * (i + 1),
-//						mPaintText);
-				// canvas.drawTe
 			}
 		}
 		pointsChange = false;
@@ -615,6 +607,11 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			_flagPairs.remove(fp);
 
 		pointsChange = true;
+	}
+
+	public void clearFlags() {
+		_flagPairs.clear();
+		pointsChange = true;		
 	}
 
 	/** Show an event in the LogCat view, for debugging */
