@@ -42,6 +42,7 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.epl603.ava.R;
@@ -406,6 +407,8 @@ public class DrawActivity extends Activity {
 			return "";
 		}
 
+		Toast.makeText(this, fileName + " saved.", Toast.LENGTH_LONG).show(); 
+		
 		return fileName;
 	}
 
