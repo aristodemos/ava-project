@@ -19,7 +19,9 @@ import org.xml.sax.XMLReader;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
@@ -244,12 +246,36 @@ public class DrawActivity extends Activity {
 			return true;
 		}
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			DrawStorage.getStorage().clearStorage();
-			return super.onKeyDown(keyCode, event);
+			ShowConfirmMessage();
+			//DrawStorage.getStorage().clearStorage();
+			return false; //super.onKeyDown(keyCode, event);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
+	private void ShowConfirmMessage() {
+		new AlertDialog.Builder(this)
+		.setTitle("Attention")
+		.setMessage("Do you want to save?")
+		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface v, int arg1) {
+				saveToXML();
+				DrawStorage.getStorage().clearStorage();
+				finish();
+			}
+
+		})
+		.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface v, int arg1) {
+				DrawStorage.getStorage().clearStorage();
+				finish();
+				
+			}
+		}).setCancelable(true).show(); 
+	}
+	
 	private void LoadData(String xmlPath) {
 		try {
 			getPoints(xmlPath);
