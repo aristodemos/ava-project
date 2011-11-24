@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import com.epl603.ava.R;
 import com.epl603.ava.activities.BioMedActivity;
 import com.epl603.ava.classes.DrawSettings;
+import com.epl603.ava.classes.DrawStorage;
 import com.epl603.ava.classes.DrawingThread;
 import com.epl603.ava.classes.FlagPair;
 import com.epl603.ava.classes.PointPath;
@@ -187,6 +188,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		_pointPaths = new ArrayList<PointPath>();
 		currentPathIndex = 0;
 		isCleanRequest = true;
+		DrawStorage.getStorage().clearPaths();
 		this.invalidate();
 	}
 
@@ -620,7 +622,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
 	public void clearFlags() {
 		_flagPairs.clear();
-		pointsChange = true;		
+		pointsChange = true;	
+		DrawStorage.getStorage().clearPairs();
 	}
 
 	public void setFlagPairsDensity() {

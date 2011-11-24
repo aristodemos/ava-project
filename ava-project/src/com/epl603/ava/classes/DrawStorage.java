@@ -46,4 +46,13 @@ public class DrawStorage {
 		paths.clear();
 		pairs.clear();
 	}
+	
+	public void clearPaths(){
+		paths.clear();
+	}
+	
+	public void clearPairs()
+	{
+		pairs.clear();
+	}
 }

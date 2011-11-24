@@ -3,6 +3,7 @@ package com.epl603.ava.activities;
 import java.io.File;
 
 import com.epl603.ava.R;
+import com.epl603.ava.classes.AppConstants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +17,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class BioMedActivity extends Activity {
-
-	private static final int SELECT_PICTURE = 1;
 
 	private static String selectedImagePath;
 
@@ -35,7 +34,7 @@ public class BioMedActivity extends Activity {
 						intent.setAction(Intent.ACTION_PICK);
 						startActivityForResult(
 								Intent.createChooser(intent, "Select Picture"),
-								SELECT_PICTURE);
+								AppConstants.SELECT_PICTURE);
 
 					}
 
@@ -57,6 +56,20 @@ public class BioMedActivity extends Activity {
 			}
 		});
 		
+		((Button) findViewById(R.id.mEditButton))
+		.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				//startLoadActivity();
+				Intent intent = new Intent();
+				intent.setType("image/*");
+				intent.setAction(Intent.ACTION_PICK);
+				startActivityForResult(
+						Intent.createChooser(intent, "Select Picture"),
+						AppConstants.SELECT_PICTURE_DIRECT_LOAD);
+			}
+
+		});		
 		
 		// ((Button) findViewById(R.id.mEditButton))
 		// .setOnClickListener(new View.OnClickListener(){
@@ -78,6 +91,11 @@ public class BioMedActivity extends Activity {
 		//dlg.show();
 	}
 	
+	/*private void startLoadActivity() {
+		
+		startActivityForResult(new Intent(this, SelectFileActivity.class), 123);
+	}*/
+	
 	public static String getSelectedImagePath() {
 		return selectedImagePath;
 	}
@@ -94,12 +112,29 @@ public class BioMedActivity extends Activity {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
-			if (requestCode == SELECT_PICTURE) {
+			if (requestCode == AppConstants.SELECT_PICTURE) {
 				Uri selectedImageUri = data.getData();
 				selectedImagePath = getPath(selectedImageUri);
 				Intent i = new Intent(BioMedActivity.this, DrawActivity.class);
 				startActivity(i);
 			}
+			else if (requestCode == AppConstants.SELECT_PICTURE_DIRECT_LOAD)
+			{
+				Uri selectedImageUri = data.getData();
+				selectedImagePath = getPath(selectedImageUri);
+				Intent i = new Intent(BioMedActivity.this, SelectFileActivity.class);
+				i.putExtra(AppConstants.EXTRA_FILTER, getImageName());
+				i.putExtra(AppConstants.EXTRA_FOLDERS, AppConstants.DOWNLOADS_FOLDER + ";" + AppConstants.APP_FOLDER);
+				i.putExtra(AppConstants.EXTRA_PATTERN, ".xml");
+				startActivityForResult(i, AppConstants.SELECT_FILE);
+			}
+		}
+		else if (resultCode == AppConstants.SELECT_FILE_OK)
+		{
+			String xmlPath = data.getStringExtra(AppConstants.EXTRA_FILE_PATH);
+			Intent i = new Intent(BioMedActivity.this, DrawActivity.class);
+			i.putExtra(AppConstants.EXTRA_FILE_PATH, xmlPath);
+			startActivity(i);
 		}
 	}
 
