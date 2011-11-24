@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -22,9 +23,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Xml;
 import android.view.KeyEvent;
@@ -83,7 +86,8 @@ public class DrawActivity extends Activity {
 		mainView = (FrameLayout) findViewById(R.id.mainLayout);
 		roi_panel = (DrawingPanel) findViewById(R.id.roiPanel);
 
-		String xmlFilePath = getIntent().getStringExtra(AppConstants.EXTRA_FILE_PATH);
+		String xmlFilePath = getIntent().getStringExtra(
+				AppConstants.EXTRA_FILE_PATH);
 		if (xmlFilePath != null) {
 			LoadData(xmlFilePath);
 		}
@@ -195,7 +199,7 @@ public class DrawActivity extends Activity {
 	}
 
 	private void ShareData() {
-		saveToXML();
+		String filePath = saveToXML();
 
 		Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
 		share.setType("text/html");
@@ -212,8 +216,10 @@ public class DrawActivity extends Activity {
 		ArrayList<Uri> uris = new ArrayList<Uri>();
 		uris.add(Uri.parse("file:///sdcard/MedImagePro/"
 				+ BioMedActivity.getImageName() + ".BMP"));
-		uris.add(Uri.parse("file:///sdcard/MedImagePro/"
-				+ BioMedActivity.getImageName() + ".xml"));
+		uris.add(Uri.parse("file:///" + filePath));
+				
+				/*sdcard/MedImagePro/"
+				+ BioMedActivity.getImageName() + ".xml"));*/
 		share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 
 		startActivityForResult(Intent.createChooser(share, "Share File"), 0);
@@ -259,7 +265,10 @@ public class DrawActivity extends Activity {
 		}
 	}
 
-	public void saveToXML() {
+	// returns filename
+	public String saveToXML() {
+
+		String dateStr = getDateString();
 
 		ArrayList<PointPath> _graphics = roi_panel.getPointPaths();
 		ArrayList<FlagPair> _flagPairs = roi_panel.getFlagPairs();
@@ -271,8 +280,11 @@ public class DrawActivity extends Activity {
 		if (!folder.exists()) {
 			folder.mkdir();
 		}
-		File newxmlfile = new File(path + File.separator
-				+ BioMedActivity.getImageName() + ".xml");
+
+		String fileName = path + File.separator + BioMedActivity.getImageName()
+				+ "_" + dateStr + ".xml";
+
+		File newxmlfile = new File(fileName);
 		try {
 			newxmlfile.createNewFile();
 		} catch (IOException e) {
@@ -365,8 +377,16 @@ public class DrawActivity extends Activity {
 
 		} catch (Exception e) {
 			Log.e("Exception", "error occurred while creating xml file");
+			return "";
 		}
 
+		return fileName;
+	}
+
+	private String getDateString() {
+		Date d = new Date();
+		CharSequence s = DateFormat.format("dd-MM-yy_hhmmss", d.getTime());
+		return s.toString();
 	}
 
 	public void loadRoi() {
@@ -412,7 +432,8 @@ public class DrawActivity extends Activity {
 				LoadData(xmlPath);
 			}
 		} else if (resultCode == AppConstants.SELECT_FILE_OK) {
-			String xmlFilePath = data.getStringExtra(AppConstants.EXTRA_FILE_PATH);
+			String xmlFilePath = data
+					.getStringExtra(AppConstants.EXTRA_FILE_PATH);
 			if (xmlFilePath != null) {
 				LoadData(xmlFilePath);
 			}
