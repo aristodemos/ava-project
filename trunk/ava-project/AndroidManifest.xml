@@ -25,6 +25,13 @@
 			android:configChanges="keyboardHidden|orientation">
 
 		</activity>
+		
+		<activity android:name="com.epl603.ava.activities.SelectFileActivity"
+			android:theme="@android:style/Theme.Dialog" android:label="File selection"
+			android:configChanges="keyboardHidden|orientation">
+
+		</activity>
+		
 	</application>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>
