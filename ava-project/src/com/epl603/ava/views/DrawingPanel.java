@@ -339,8 +339,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 							// matrix.postScale(scale, scale, mid.x, mid.y);
 						}
 					}
-
-					needsSave = true;
 					
 					int screenHeight = this.getHeight();
 					int screenWidth = this.getWidth();
@@ -381,6 +379,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				return true;
 			}
 
+			needsSave = true;
 			pointsChange = true;
 
 			if (currentPathIndex < 0)
