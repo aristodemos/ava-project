@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, StartActivity!</string>
+	<string name="app_name">MED Image Pro</string>
+
+	<!-- menu -->
+	<string name="draw_roi">Mode dessiner</string>
+	<string name="pause_draw">Arret dessiner</string>
+	<string name="close_ROI">Fermer ROI</string>
+	<string name="undo">Annuler</string>
+	<string name="clear">Claire</string>
+	<string name="next">Suivante ROI</string>
+	<string name="undo_flag">Enlever le dernier</string>
+	<string name="share">Partager</string>
+	<string name="ok">Ok</string>
+	<string name="save_rois">Sauver ROIs</string>
+	<string name="load_roi">Charge ROIs</string>
+	<string name="select_picture">Sélectionner une image</string>
+	<string name="attention">Attention</string>
+	<string name="save">Vous voulez sauvegarder?</string>
+	<string name="yes">Oui!</string>
+	<string name="no">No</string>
+	<string name="save_settings">Paramètres enregistrés :)</string>
+	<string name="pixel_err">Pixel par millimètre doit être supérieure à 0</string>
+	<string name="warning">Warining !!!</string>
+	<string name="pick_color">Choisir un coulerr:</string>
+	<string name="share_file">Partage de fichiers</string>
+	<string name="email_subject">MedImagePro diagnosis share</string>
+	<string name="email_body">This is an automated email from MedImagePro
+		application. \nPlease do not reply. \n\nIf you are not the recipient of this
+		email please ignore this message.</string>
+</resources>
