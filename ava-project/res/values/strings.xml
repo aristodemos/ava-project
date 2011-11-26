@@ -15,4 +15,13 @@
     <string name="ok">Ok</string>
     <string name="save_rois">Save ROIs</string>
     <string name="load_roi">Load ROIs</string>
+    <string name="select_picture">Select Picture</string>
+    <string name="attention">Attention</string>
+    <string name="save">Do you want to save?</string>    
+    <string name="yes">Yes!</string>
+    <string name="no">No</string>
+    <string name="save_settings">Settings Saved :)</string>
+    <string name="pixel_err">Pixel per millimeter should be more than 0</string>
+    <string name="warning">Warining !!!</string>
+   <string name="pick_color">Pick a color:</string> 
 </resources>

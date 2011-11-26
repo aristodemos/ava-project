@@ -27,13 +27,12 @@ public class BioMedActivity extends Activity {
 		setContentView(R.layout.main);
 		((Button) findViewById(R.id.mloadButton))
 				.setOnClickListener(new OnClickListener() {
-					@Override
 					public void onClick(View arg0) {
 						Intent intent = new Intent();
 						intent.setType("image/*");
 						intent.setAction(Intent.ACTION_PICK);
 						startActivityForResult(
-								Intent.createChooser(intent, "Select Picture"),
+								Intent.createChooser(intent, getString(R.string.select_picture)),
 								AppConstants.SELECT_PICTURE);
 
 					}
@@ -42,7 +41,6 @@ public class BioMedActivity extends Activity {
 
 		((Button) findViewById(R.id.mExitButton))
 		.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View arg0) {
 				finish();
 			}
@@ -50,7 +48,6 @@ public class BioMedActivity extends Activity {
 		
 		((Button) findViewById(R.id.mSettingsButton))
 		.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View arg0) {
 				startSettingsActivity();
 			}
@@ -58,14 +55,13 @@ public class BioMedActivity extends Activity {
 		
 		((Button) findViewById(R.id.mEditButton))
 		.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View arg0) {
 				//startLoadActivity();
 				Intent intent = new Intent();
 				intent.setType("image/*");
 				intent.setAction(Intent.ACTION_PICK);
 				startActivityForResult(
-						Intent.createChooser(intent, "Select Picture"),
+						Intent.createChooser(intent, getString(R.string.select_picture)),
 						AppConstants.SELECT_PICTURE_DIRECT_LOAD);
 			}
 

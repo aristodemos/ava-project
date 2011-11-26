@@ -16,6 +16,8 @@
 
 package com.epl603.ava.views;
 
+import com.epl603.ava.R;
+
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Context;
@@ -229,6 +231,6 @@ public class ColorPickerDialog extends Dialog {
         };
 
         setContentView(new ColorPickerView(getContext(), l, mInitialColor));
-        setTitle("Pick a color:");
+        setTitle(R.string.pick_color);
     }
 }
