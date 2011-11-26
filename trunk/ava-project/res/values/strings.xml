@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, StartActivity!</string>
-    <string name="app_name">MED Image Pro</string>
-    
-	<!--     menu 		-->
-    <string name="draw_roi">Draw Mode</string>
-    <string name="pause_draw">Pause Draw</string>
-    <string name="close_ROI">Close ROI</string>
-    <string name="undo">Undo</string>
+	<string name="hello">Hello World, StartActivity!</string>
+	<string name="app_name">MED Image Pro</string>
+
+	<!-- menu -->
+	<string name="draw_roi">Draw Mode</string>
+	<string name="pause_draw">Pause Draw</string>
+	<string name="close_ROI">Close ROI</string>
+	<string name="undo">Undo</string>
 	<string name="clear">Clear</string>
 	<string name="next">Next ROI</string>
 	<string name="undo_flag">Remove last</string>
-    <string name="share">Share</string>
-    <string name="ok">Ok</string>
-    <string name="save_rois">Save ROIs</string>
-    <string name="load_roi">Load ROIs</string>
-    <string name="select_picture">Select Picture</string>
-    <string name="attention">Attention</string>
-    <string name="save">Do you want to save?</string>    
-    <string name="yes">Yes!</string>
-    <string name="no">No</string>
-    <string name="save_settings">Settings Saved :)</string>
-    <string name="pixel_err">Pixel per millimeter should be more than 0</string>
-    <string name="warning">Warining !!!</string>
-   <string name="pick_color">Pick a color:</string> 
+	<string name="share">Share</string>
+	<string name="ok">Ok</string>
+	<string name="save_rois">Save ROIs</string>
+	<string name="load_roi">Load ROIs</string>
+	<string name="select_picture">Select Picture</string>
+	<string name="attention">Attention</string>
+	<string name="save">Do you want to save?</string>
+	<string name="yes">Yes!</string>
+	<string name="no">No</string>
+	<string name="save_settings">Settings Saved :)</string>
+	<string name="pixel_err">Pixel per millimeter should be more than 0</string>
+	<string name="warning">Warining !!!</string>
+	<string name="pick_color">Pick a color:</string>
+	<string name="share_file">Share File</string>
+	<string name="email_subject">MedImagePro diagnosis share</string>
+	<string name="email_body">This is an automated email from MedImagePro
+		application. \nPlease do not reply. \n\nIf you are not the recipient of this
+		email please ignore this message.</string>
 </resources>

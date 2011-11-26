@@ -205,15 +205,19 @@ public class DrawActivity extends Activity {
 		 * BioMedActivity.getImageName() + ".BMP"));
 		 */
 		ArrayList<Uri> uris = new ArrayList<Uri>();
-		uris.add(Uri.parse("file:///sdcard/MedImagePro/"
-				+ BioMedActivity.getImageName() + ".BMP"));
+		uris.add(Uri.parse("file:///" + BioMedActivity.getSelectedImagePath())); 
+				
+				/*sdcard/MedImagePro/"
+				+ BioMedActivity.getImageName() + ".BMP"));*/
 		uris.add(Uri.parse("file:///" + filePath));
 				
 				/*sdcard/MedImagePro/"
 				+ BioMedActivity.getImageName() + ".xml"));*/
 		share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+		share.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+		share.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
 
-		startActivityForResult(Intent.createChooser(share, "Share File"), 0);
+		startActivityForResult(Intent.createChooser(share, getString(R.string.share_file)), 0);
 	}
 
 	// aris - method to output arraylist of ROI points to XML
