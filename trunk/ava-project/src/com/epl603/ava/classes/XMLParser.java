@@ -25,6 +25,7 @@ public class XMLParser extends DefaultHandler {
 	StringBuilder builder;
 	PointF tempPoint;
 	PointF tempFlagPoint;
+	Boolean isClosed = false;
 	
 	
 	public void startDocument() throws SAXException{
@@ -33,26 +34,31 @@ public class XMLParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
 		throws SAXException {
 		
-		if (localName.equalsIgnoreCase(AppConstants.ROIS)){
+		if (localName.equalsIgnoreCase(AppConstants.MED_IMG)){
 			builder=new StringBuilder();
 		}
 		if (localName.equalsIgnoreCase(AppConstants.ROI)){
 			tempPath=new PointPath();
+			if (attributes.getValue(AppConstants.IS_CLOSED).equalsIgnoreCase(Integer.toString(AppConstants.CLOSED_TRUE))){
+				isClosed = true;
+				}	   
 			
 		}
+		
 		else if(localName.toLowerCase().equals(AppConstants.POINT)){
 			//builder=new StringBuilder();
 				tempPoint=new PointF();
 			   //String attr = attributes.getValue("xxx");
 			   tempPoint.x = Float.valueOf(attributes.getValue(AppConstants.POINT_X)).floatValue();
 			   tempPoint.y = Float.valueOf(attributes.getValue(AppConstants.POINT_Y)).floatValue();
+
 			   //builder=new StringBuilder();
 		}
-		else if (localName.toLowerCase().equalsIgnoreCase(AppConstants.IS_CLOSED)){
-			if (attributes.getValue(AppConstants.IS_CLOSED).equalsIgnoreCase("-1")){
+	/*	else if (localName.toLowerCase().equalsIgnoreCase(AppConstants.IS_CLOSED)){
+			if (attributes.getValue(AppConstants.IS_CLOSED).equalsIgnoreCase(Integer.toString(AppConstants.CLOSED_TRUE))){
 				this.tempPath.close();
 			}
-		}
+		}*/
 		else if (localName.toLowerCase().equalsIgnoreCase(AppConstants.FLAG_PAIRS)){
 			flags = new ArrayList<FlagPair>();
 		}
@@ -79,10 +85,14 @@ public class XMLParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName)
 		throws SAXException{
 		if(localName.equals(AppConstants.ROI)){
+			if (isClosed){
+				this.tempPath.close();
+			}
 			this.roiPaths.add(tempPath);
 		}
 		else if(localName.toLowerCase().equals(AppConstants.POINT)){
 			this.tempPath.addPoint(this.tempPoint.x, this.tempPoint.y, 0, 0, 1);
+			
 		}
 		else if(localName.toLowerCase().equals(AppConstants.PAIR)){
 			this.flags.add(myFlagPair);

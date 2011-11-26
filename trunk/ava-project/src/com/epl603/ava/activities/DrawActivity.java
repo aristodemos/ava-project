@@ -328,11 +328,23 @@ public class DrawActivity extends Activity {
 					"http://xmlpull.org/v1/doc/features.html#indent-output",
 					true);
 			// start a tag called "image_name"
+			
+		
+			
 			serializer.startTag("", AppConstants.MED_IMG);
+				
+
+			serializer.attribute("", AppConstants.IMG_NAME, BioMedActivity.getImageName());
+	
+			
+			
 			serializer.startTag("", AppConstants.ROIS);
 			for (PointPath myPath : _graphics) {
-				serializer.startTag("", "roi");
+				serializer.startTag("", AppConstants.ROI);
 
+				serializer.attribute("", AppConstants.IS_CLOSED,
+						Integer.toString(myPath.isClosed));
+				
 				for (PointF p : myPath.points) {
 					serializer.startTag("", AppConstants.POINT);
 					
@@ -343,12 +355,15 @@ public class DrawActivity extends Activity {
 
 					serializer.endTag("", AppConstants.POINT);
 				}
+				
+				
+				
 				serializer.endTag("", AppConstants.ROI);
-
-				serializer.startTag("", AppConstants.IS_CLOSED);
-				serializer.attribute("", AppConstants.IS_CLOSED,
-						Integer.toString(myPath.isClosed));
-				serializer.endTag("", AppConstants.IS_CLOSED);
+//
+//				serializer.startTag("", AppConstants.IS_CLOSED);
+//				serializer.attribute("", AppConstants.IS_CLOSED,
+//				Integer.toString(myPath.isClosed));
+//				serializer.endTag("", AppConstants.IS_CLOSED);
 
 			}
 			serializer.endTag("", AppConstants.ROIS);
