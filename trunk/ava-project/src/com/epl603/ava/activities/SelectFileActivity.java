@@ -10,13 +10,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class SelectFileActivity extends Activity {
 
-	
 	private ListView fileListView;
 
 	private String folders;
@@ -41,17 +44,33 @@ public class SelectFileActivity extends Activity {
 
 		fileListView = (ListView) findViewById(R.id.fileList);
 
-		fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View v, int position,
-					long id) {
-					
-				Intent i = new Intent();
-				i.putExtra(AppConstants.EXTRA_FILE_PATH, listPaths.get(position));
-				setResult(AppConstants.SELECT_FILE_OK, i);
-				finish();
-			}
-		});
-		
+		/*
+		 * TextView emptyView = new TextView(this);
+		 * emptyView.setText(getString(R.string.no_items));
+		 * fileListView.setEmptyView(emptyView);
+		 */
+
+		TextView emptyView = new TextView(this);
+		emptyView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT));
+		emptyView.setText(R.string.no_items);
+		emptyView.setVisibility(View.GONE);
+		((ViewGroup) fileListView.getParent()).addView(emptyView);
+		fileListView.setEmptyView(emptyView);
+
+		fileListView
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					public void onItemClick(AdapterView<?> arg0, View v,
+							int position, long id) {
+
+						Intent i = new Intent();
+						i.putExtra(AppConstants.EXTRA_FILE_PATH,
+								listPaths.get(position));
+						setResult(AppConstants.SELECT_FILE_OK, i);
+						finish();
+					}
+				});
+
 		LoadFiles();
 
 		// fileListView.setAdapter(new

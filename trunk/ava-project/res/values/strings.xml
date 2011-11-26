@@ -18,13 +18,14 @@
 	<string name="select_picture">Select Picture</string>
 	<string name="attention">Attention</string>
 	<string name="save">Do you want to save?</string>
-	<string name="yes">Yes!</string>
+	<string name="yes">Yes</string>
 	<string name="no">No</string>
-	<string name="save_settings">Settings Saved :)</string>
+	<string name="save_settings">Settings Saved</string>
 	<string name="pixel_err">Pixel per millimeter should be more than 0</string>
-	<string name="warning">Warning !!!</string>
+	<string name="warning">Warning</string>
 	<string name="pick_color">Pick a color:</string>
 	<string name="share_file">Share File</string>
+	<string name="no_items">No items found.</string>
 	<string name="email_subject">MedImagePro diagnosis share</string>
 	<string name="email_body">This is an automated email from MedImagePro
 		application. \nPlease do not reply. \n\nIf you are not the recipient of this

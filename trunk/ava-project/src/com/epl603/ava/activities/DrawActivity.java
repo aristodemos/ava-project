@@ -130,6 +130,7 @@ public class DrawActivity extends Activity {
 		DrawStorage.getStorage().setPairs(roi_panel.getFlagPairs());
 		DrawStorage.getStorage().setPaths(roi_panel.getPointPaths());
 		super.onDestroy();
+		System.gc();
 	}
 
 	@Override
@@ -238,7 +239,7 @@ public class DrawActivity extends Activity {
 			roi_panel.ChangeLastFlagColor();
 			return true;
 		}
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && roi_panel.needsSave) {
 			ShowConfirmMessage();
 			//DrawStorage.getStorage().clearStorage();
 			return false; //super.onKeyDown(keyCode, event);
@@ -285,6 +286,8 @@ public class DrawActivity extends Activity {
 	// returns filename
 	public String saveToXML() {
 
+		roi_panel.needsSave = false;
+		
 		String dateStr = getDateString();
 
 		ArrayList<PointPath> _graphics = roi_panel.getPointPaths();

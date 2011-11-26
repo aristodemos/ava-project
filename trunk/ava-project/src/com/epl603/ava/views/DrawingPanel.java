@@ -82,6 +82,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	// private boolean isZooming = false;
 	private boolean isCleanRequest = true;
 	public boolean pointsChange;// = false;
+	public boolean needsSave = false; 
 	private boolean targetDown = false;
 
 	private Matrix matrix = new Matrix();
@@ -217,6 +218,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 			boolean isBreakPoint = false;
 
 			if (isFlagMode) {
+				needsSave = true;
+				
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
 					targetDown = true;
@@ -337,6 +340,8 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 						}
 					}
 
+					needsSave = true;
+					
 					int screenHeight = this.getHeight();
 					int screenWidth = this.getWidth();
 
