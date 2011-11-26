@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PointF;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -60,17 +59,7 @@ public class DrawActivity extends Activity {
 	private DrawingPanel roi_panel;
 	FrameLayout mainView;
 
-	private final int MENU_LOAD_ROI = 0;
-	private final int MENU_PAUSE_DRAW = 1;
-	private final int MENU_CLOSE_ROI = 2;
-	private final int MENU_UNDO = 3;
-	private final int MENU_CLEAR = 4;
-	private final int MENU_SAVE = 5;
-	private final int MENU_NEXT = 6;
-	private static final int SELECT_XML = 7;
-	private final int MENU_UNDO_FLAG = 8;
-	private final int MENU_SHARE = 9;
-	private final int MENU_CLEAR_FLAGS = 10;
+	
 
 	ToggleButton togglebuttonFlag;
 	ToggleButton togglebuttonDraw;
@@ -112,7 +101,6 @@ public class DrawActivity extends Activity {
 		togglebuttonFlag
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
 						roi_panel.switchFlagMode(isChecked);
@@ -149,17 +137,17 @@ public class DrawActivity extends Activity {
 		menu.clear();
 
 		if (roi_panel.isFlagMode) {
-			menu.add(0, MENU_UNDO_FLAG, 0, R.string.undo_flag);
-			menu.add(0, MENU_CLEAR_FLAGS, 0, R.string.clear);
+			menu.add(0, AppConstants.MENU_UNDO_FLAG, 0, R.string.undo_flag);
+			menu.add(0, AppConstants.MENU_CLEAR_FLAGS, 0, R.string.clear);
 		} else if (roi_panel.isDrawMode) {
-			menu.add(0, MENU_CLOSE_ROI, 0, R.string.close_ROI);
-			menu.add(0, MENU_NEXT, 0, R.string.next);
-			menu.add(0, MENU_UNDO, 0, R.string.undo);
-			menu.add(0, MENU_CLEAR, 0, R.string.clear);
+			menu.add(0, AppConstants.MENU_CLOSE_ROI, 0, R.string.close_ROI);
+			menu.add(0, AppConstants.MENU_NEXT, 0, R.string.next);
+			menu.add(0, AppConstants.MENU_UNDO, 0, R.string.undo);
+			menu.add(0, AppConstants.MENU_CLEAR, 0, R.string.clear);
 		} else {
-			menu.add(0, MENU_SAVE, 0, R.string.save_rois);
-			menu.add(0, MENU_LOAD_ROI, 0, R.string.load_roi);
-			menu.add(0, MENU_SHARE, 0, R.string.share);
+			menu.add(0, AppConstants.MENU_SAVE, 0, R.string.save_rois);
+			menu.add(0, AppConstants.MENU_LOAD_ROI, 0, R.string.load_roi);
+			menu.add(0, AppConstants.MENU_SHARE, 0, R.string.share);
 		}
 
 		return super.onPrepareOptionsMenu(menu);
@@ -168,33 +156,33 @@ public class DrawActivity extends Activity {
 	/* Handles item selections */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_SAVE:
+		case AppConstants.MENU_SAVE:
 			saveToXML();
 			return true;
-		case MENU_PAUSE_DRAW:
+		case AppConstants.MENU_PAUSE_DRAW:
 			roi_panel.exitDrawMode();
 			return true;
-		case MENU_LOAD_ROI:
+		case AppConstants.MENU_LOAD_ROI:
 			loadRoi();
-		case MENU_CLOSE_ROI:
+		case AppConstants.MENU_CLOSE_ROI:
 			roi_panel.CloseActivePath();
 			return true;
-		case MENU_NEXT:
+		case AppConstants.MENU_NEXT:
 			roi_panel.NextPath();
 			return true;
-		case MENU_CLEAR:
+		case AppConstants.MENU_CLEAR:
 			roi_panel.ClearROIs();
 			return true;
-		case MENU_UNDO:
+		case AppConstants.MENU_UNDO:
 			roi_panel.UndoLastPoint();
 			return true;
-		case MENU_UNDO_FLAG:
+		case AppConstants.MENU_UNDO_FLAG:
 			roi_panel.UndoLastFlag();
 			return true;
-		case MENU_SHARE:
+		case AppConstants.MENU_SHARE:
 			ShareData();
 			return true;
-		case MENU_CLEAR_FLAGS:
+		case AppConstants.MENU_CLEAR_FLAGS:
 			roi_panel.clearFlags();
 			return true;
 		}
@@ -256,10 +244,9 @@ public class DrawActivity extends Activity {
 
 	private void ShowConfirmMessage() {
 		new AlertDialog.Builder(this)
-		.setTitle("Attention")
-		.setMessage("Do you want to save?")
-		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			@Override
+		.setTitle(getString(R.string.attention))
+		.setMessage(getString(R.string.save))
+		.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface v, int arg1) {
 				saveToXML();
 				DrawStorage.getStorage().clearStorage();
@@ -267,8 +254,7 @@ public class DrawActivity extends Activity {
 			}
 
 		})
-		.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			@Override
+		.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface v, int arg1) {
 				DrawStorage.getStorage().clearStorage();
 				finish();
@@ -338,64 +324,57 @@ public class DrawActivity extends Activity {
 					"http://xmlpull.org/v1/doc/features.html#indent-output",
 					true);
 			// start a tag called "image_name"
-			// serializer.startTag("", "image:");
-			// serializer.attribute("", "filepath",
-			// BioMedActivity.getSelectedImagePath());
-			// serializer.endTag("", "image:");
-			// i indent code just to have a view similar to xml-tree
-			serializer.startTag("", "medImage");
-			serializer.startTag("", "ROIs");
+			serializer.startTag("", AppConstants.MED_IMG);
+			serializer.startTag("", AppConstants.ROIS);
 			for (PointPath myPath : _graphics) {
 				serializer.startTag("", "roi");
 
 				for (PointF p : myPath.points) {
-					serializer.startTag("", "point");
-					// serializer.startTag("", "xxx");
-					serializer.attribute("", "xxx", Float.toString(p.x));
-					// serializer.endTag("", "xxx");
+					serializer.startTag("", AppConstants.POINT);
+					
+					serializer.attribute("", AppConstants.POINT_X, Float.toString(p.x));
+					
+					serializer.attribute("", AppConstants.POINT_Y, Float.toString(p.y));
+					
 
-					// serializer.startTag("", "yy");
-					serializer.attribute("", "yy", Float.toString(p.y));
-					// serializer.endTag("", "yy");
-
-					serializer.endTag("", "point");
+					serializer.endTag("", AppConstants.POINT);
 				}
-				serializer.endTag("", "roi");
+				serializer.endTag("", AppConstants.ROI);
 
-				serializer.startTag("", "isClosed");
-				serializer.attribute("", "isClosed",
+				serializer.startTag("", AppConstants.IS_CLOSED);
+				serializer.attribute("", AppConstants.IS_CLOSED,
 						Integer.toString(myPath.isClosed));
-				serializer.endTag("", "isClosed");
+				serializer.endTag("", AppConstants.IS_CLOSED);
 
 			}
-			serializer.endTag("", "ROIs");
-			serializer.startTag("", "flagPairs");
+			serializer.endTag("", AppConstants.ROIS);
+			serializer.startTag("", AppConstants.FLAG_PAIRS);
 			for (FlagPair myFlagPairs : _flagPairs) {
-				serializer.startTag("", "pair");
-				serializer.startTag("", "start");
-				serializer.attribute("", "sx",
+				serializer.startTag("", AppConstants.PAIR);
+				serializer.startTag("", AppConstants.START);
+				serializer.attribute("", AppConstants.START_X,
 						Float.toString(myFlagPairs.getStart().x));
-				serializer.attribute("", "sy",
+				serializer.attribute("", AppConstants.START_Y,
 						Float.toString(myFlagPairs.getStart().y));
-				serializer.endTag("", "start");
-				serializer.startTag("", "color");
-				serializer.attribute("", "color",
+				serializer.endTag("", AppConstants.START);
+				serializer.startTag("", AppConstants.COLOR);
+				serializer.attribute("", AppConstants.COLOR,
 						Integer.toString(myFlagPairs.getColor()));
-				serializer.endTag("", "color");
-				serializer.startTag("", "distance");
-				serializer.attribute("", "distance",
+				serializer.endTag("", AppConstants.COLOR);
+				serializer.startTag("", AppConstants.DISTANCE);
+				serializer.attribute("", AppConstants.DISTANCE,
 						Double.toString(myFlagPairs.getDistanceInPixels()));
-				serializer.endTag("", "distance");
-				serializer.startTag("", "finish");
-				serializer.attribute("", "fx",
+				serializer.endTag("", AppConstants.DISTANCE);
+				serializer.startTag("", AppConstants.FINISH);
+				serializer.attribute("", AppConstants.FINISH_X,
 						Float.toString(myFlagPairs.getFinish().x));
-				serializer.attribute("", "fy",
+				serializer.attribute("", AppConstants.FINISH_Y,
 						Float.toString(myFlagPairs.getFinish().y));
-				serializer.endTag("", "finish");
-				serializer.endTag("", "pair");
+				serializer.endTag("", AppConstants.FINISH);
+				serializer.endTag("", AppConstants.PAIR);
 			}
-			serializer.endTag("", "flagPairs");
-			serializer.endTag("", "medImage");
+			serializer.endTag("", AppConstants.FLAG_PAIRS);
+			serializer.endTag("", AppConstants.MED_IMG);
 			serializer.endDocument();
 			// write xml data into the FileOutputStream
 			serializer.flush();
@@ -419,13 +398,6 @@ public class DrawActivity extends Activity {
 	}
 
 	public void loadRoi() {
-		/*
-		 * Intent intent = new Intent(); intent.setType("text/xml");
-		 * intent.setAction(Intent.ACTION_GET_CONTENT);
-		 * startActivityForResult(Intent.createChooser(intent, "Select XML"),
-		 * SELECT_XML);
-		 */
-
 		Intent i = new Intent(DrawActivity.this, SelectFileActivity.class);
 		i.putExtra(AppConstants.EXTRA_FILTER, BioMedActivity.getImageName());
 		i.putExtra(AppConstants.EXTRA_FOLDERS, AppConstants.DOWNLOADS_FOLDER
@@ -437,27 +409,8 @@ public class DrawActivity extends Activity {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
-			if (requestCode == SELECT_XML) {
+			if (requestCode == AppConstants.SELECT_XML) {
 				xmlPath = data.getData().getPath();
-				// try {
-				// //
-				// getPoints(xmlPath);
-				// // DrawStorage.getStorage().setPaths(myPaths);
-				// // roi_panel.setPointPaths(myPaths);
-				// /*
-				// * roi_panel.setCurrentPathIndex(myPaths.size());
-				// * roi_panel.pointsChange=true;
-				// */
-				// } catch (ParserConfigurationException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// } catch (SAXException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// } catch (IOException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// }
 				LoadData(xmlPath);
 			}
 		} else if (resultCode == AppConstants.SELECT_FILE_OK) {
@@ -473,7 +426,6 @@ public class DrawActivity extends Activity {
 			throws ParserConfigurationException, SAXException, IOException {
 		BufferedReader br = new BufferedReader(new FileReader(path));
 		InputSource is = new InputSource(br);
-		// URL sourceXML = new URL(path);
 		XMLParser parser = new XMLParser();
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser sp = factory.newSAXParser();

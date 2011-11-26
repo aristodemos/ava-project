@@ -21,7 +21,6 @@ public class SettingsActivity extends Activity {
 		public ColorChangedListener() {
 		}
 
-		@Override
 		public void colorChanged(int color) {
 			SetColor(color);
 		}
@@ -46,7 +45,6 @@ public class SettingsActivity extends Activity {
 
 		btnColor.setOnClickListener(new OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				colorPicker.show();
 			}
@@ -54,7 +52,6 @@ public class SettingsActivity extends Activity {
 
 		btnSave.setOnClickListener(new OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				SaveSettings();
 			}
@@ -62,7 +59,6 @@ public class SettingsActivity extends Activity {
 
 		btnCancel.setOnClickListener(new OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				Close();
 			}
@@ -94,16 +90,16 @@ public class SettingsActivity extends Activity {
 				throw new Exception();
 			}
 			finish();
-			Toast.makeText(this, "Settings saved.", Toast.LENGTH_LONG).show(); 
+			Toast.makeText(this, getString(R.string.save_settings), Toast.LENGTH_LONG).show(); 
 			
 		} catch (Exception ex) {
-			CreateAlert("Pixel per milimeter should be more than 0.");
+			CreateAlert(getString(R.string.pixel_err));
 		}		
 	}
 
 	private void CreateAlert(String msg) {
-		new AlertDialog.Builder(this).setTitle("Warning").setMessage(msg)
-				.setNeutralButton("Ok", null).show();
+		new AlertDialog.Builder(this).setTitle(getString(R.string.warning)).setMessage(msg)
+				.setNeutralButton(getString(R.string.ok), null).show();
 	}
 
 }

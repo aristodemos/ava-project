@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.epl603.ava.R;
+import com.epl603.ava.classes.AppConstants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,12 +16,7 @@ import android.widget.ListView;
 
 public class SelectFileActivity extends Activity {
 
-	private static final String EXTRA_FILTER = "extra_filter";
-	private static final String EXTRA_FOLDERS = "folders";
-	private static final String EXTRA_PATTERN = "pattern";
-	private static final String EXTRA_FILE_PATH = "path";
-	private static final int SELECT_FILE_OK = 10;
-
+	
 	private ListView fileListView;
 
 	private String folders;
@@ -39,20 +35,19 @@ public class SelectFileActivity extends Activity {
 		setContentView(R.layout.file_list);
 		super.onCreate(savedInstanceState);
 
-		filename = getIntent().getStringExtra(EXTRA_FILTER);
-		folders = getIntent().getStringExtra(EXTRA_FOLDERS);
-		pattern = getIntent().getStringExtra(EXTRA_PATTERN);
+		filename = getIntent().getStringExtra(AppConstants.EXTRA_FILTER);
+		folders = getIntent().getStringExtra(AppConstants.EXTRA_FOLDERS);
+		pattern = getIntent().getStringExtra(AppConstants.EXTRA_PATTERN);
 
 		fileListView = (ListView) findViewById(R.id.fileList);
 
 		fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position,
 					long id) {
 					
 				Intent i = new Intent();
-				i.putExtra(EXTRA_FILE_PATH, listPaths.get(position));
-				setResult(SELECT_FILE_OK, i);
+				i.putExtra(AppConstants.EXTRA_FILE_PATH, listPaths.get(position));
+				setResult(AppConstants.SELECT_FILE_OK, i);
 				finish();
 			}
 		});
