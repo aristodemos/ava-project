@@ -28,11 +28,13 @@ public class AppConstants {
 	
 	// XML Constants here
 	public static final String MED_IMG = "medImage";
+	public static final String IMG_NAME = "name";
+	public static final String NAME = "name:";
 	public static final String ROIS = "ROIs";
 	public static final String ROI = "roi";
 	public static final String POINT = "point";
-	public static final String POINT_X = "pointx";
-	public static final String POINT_Y = "pointy";
+	public static final String POINT_X = "x";
+	public static final String POINT_Y = "y";
 	public static final String IS_CLOSED = "isClosed";
 	public static final String FLAG_PAIRS = "flagPairs";
 	public static final String PAIR = "pair";
@@ -40,10 +42,11 @@ public class AppConstants {
 	public static final String FINISH = "finish";
 	public static final String COLOR = "color";
 	public static final String DISTANCE = "distance";
-	public static final String FINISH_X = "finishx";
-	public static final String FINISH_Y = "finiishy";
-	public static final String START_X = "startx";
-	public static final String START_Y = "starty";
+	public static final String FINISH_X = "x";
+	public static final String FINISH_Y = "y";
+	public static final String START_X = "x";
+	public static final String START_Y = "y";
+	public static final int CLOSED_TRUE = 1;
 	
 	public static final String PREFS_NAME = "MedImageProPrefs";
 	public static final String DRAW_COLOR = "drawColor";

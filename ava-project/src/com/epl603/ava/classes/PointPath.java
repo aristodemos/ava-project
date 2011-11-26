@@ -69,7 +69,7 @@ public class PointPath extends Path{
 		if (points.size() > 0)
 		{
 			points.get(points.size()-1).isClosing = true;
-			this.isClosed = -1;
+			this.isClosed = AppConstants.CLOSED_TRUE;
 			super.close();
 		}
 	}
