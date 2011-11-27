@@ -373,26 +373,34 @@ public class DrawActivity extends Activity {
 			serializer.startTag("", AppConstants.FLAG_PAIRS);
 			for (FlagPair myFlagPairs : _flagPairs) {
 				serializer.startTag("", AppConstants.PAIR);
+				
 				serializer.startTag("", AppConstants.START);
 				serializer.attribute("", AppConstants.START_X,
 						Float.toString(myFlagPairs.getStart().x));
 				serializer.attribute("", AppConstants.START_Y,
 						Float.toString(myFlagPairs.getStart().y));
 				serializer.endTag("", AppConstants.START);
-				serializer.startTag("", AppConstants.COLOR);
-				serializer.attribute("", AppConstants.COLOR,
-						Integer.toString(myFlagPairs.getColor()));
-				serializer.endTag("", AppConstants.COLOR);
-				serializer.startTag("", AppConstants.DISTANCE);
-				serializer.attribute("", AppConstants.DISTANCE,
-						Double.toString(myFlagPairs.getDistanceInPixels()));
-				serializer.endTag("", AppConstants.DISTANCE);
+				
 				serializer.startTag("", AppConstants.FINISH);
 				serializer.attribute("", AppConstants.FINISH_X,
 						Float.toString(myFlagPairs.getFinish().x));
 				serializer.attribute("", AppConstants.FINISH_Y,
 						Float.toString(myFlagPairs.getFinish().y));
 				serializer.endTag("", AppConstants.FINISH);
+				
+				serializer.startTag("", AppConstants.COLOR);
+				/*serializer.attribute("", AppConstants.COLOR,
+						Integer.toString(myFlagPairs.getColor()));*/
+				serializer.text(Integer.toString(myFlagPairs.getColor()));
+				serializer.endTag("", AppConstants.COLOR);
+				serializer.startTag("", AppConstants.DISTANCE);
+				/*serializer.attribute("", AppConstants.DISTANCE,
+						Double.toString(myFlagPairs.getDistanceInPixels()));*/
+				serializer.text(Double.toString(myFlagPairs.getDistanceInPixels()));
+				
+				
+				serializer.endTag("", AppConstants.DISTANCE);
+
 				serializer.endTag("", AppConstants.PAIR);
 			}
 			serializer.endTag("", AppConstants.FLAG_PAIRS);

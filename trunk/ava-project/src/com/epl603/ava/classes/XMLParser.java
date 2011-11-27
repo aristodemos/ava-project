@@ -31,6 +31,7 @@ public class XMLParser extends DefaultHandler {
 	public void startDocument() throws SAXException{
 		roiPaths = new ArrayList<PointPath>();
 	}	
+	
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
 		throws SAXException {
 		
@@ -75,10 +76,14 @@ public class XMLParser extends DefaultHandler {
 		}
 		
 		else if (localName.equals(AppConstants.COLOR)){
-			 myFlagPair.setColor(Integer.valueOf(attributes.getValue(AppConstants.COLOR)));
+			//String a = builder.toString();
+			// myFlagPair.setColor(Integer.valueOf(builder.toString())); //attributes.getValue(AppConstants.COLOR)));
+			builder = new StringBuilder();
 		}
 		else if (localName.equalsIgnoreCase(AppConstants.DISTANCE)){
-			myFlagPair.setDistanceInPixels(Double.valueOf(attributes.getValue(AppConstants.DISTANCE)));
+			//String a = builder.toString();
+			//myFlagPair.setDistanceInPixels(Double.valueOf(builder.toString())); //attributes.getValue(AppConstants.DISTANCE)));
+			builder = new StringBuilder();
 		}
 
 	}
@@ -96,6 +101,14 @@ public class XMLParser extends DefaultHandler {
 		}
 		else if(localName.toLowerCase().equals(AppConstants.PAIR)){
 			this.flags.add(myFlagPair);
+		}
+		else if (localName.equals(AppConstants.COLOR)){
+			String a = builder.toString();
+			 myFlagPair.setColor(Integer.valueOf(builder.toString())); //attributes.getValue(AppConstants.COLOR)));
+		}
+		else if (localName.equalsIgnoreCase(AppConstants.DISTANCE)){
+			String a = builder.toString();
+			myFlagPair.setDistanceInPixels(Double.valueOf(builder.toString())); //attributes.getValue(AppConstants.DISTANCE)));
 		}
 		
 		/*else if(localName.toLowerCase().equals("x")){
