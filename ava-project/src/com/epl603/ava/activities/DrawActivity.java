@@ -51,6 +51,7 @@ import com.epl603.ava.classes.DrawStorage;
 import com.epl603.ava.classes.PointPath;
 import com.epl603.ava.classes.XMLParser;
 import com.epl603.ava.views.DrawingPanel;
+import com.epl603.ava.classes.DrawSettings;
 
 public class DrawActivity extends Activity {
 
@@ -59,7 +60,7 @@ public class DrawActivity extends Activity {
 	private DrawingPanel roi_panel;
 	FrameLayout mainView;
 
-	
+	private String lastSavedPath;
 
 	ToggleButton togglebuttonFlag;
 	ToggleButton togglebuttonDraw;
@@ -191,7 +192,16 @@ public class DrawActivity extends Activity {
 	}
 
 	private void ShareData() {
-		String filePath = saveToXML();
+		String filePath;
+		
+		if (roi_panel.needsSave)
+		{
+			filePath = saveToXML();
+		}
+		else
+		{
+			filePath = lastSavedPath;
+		}
 
 		Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
 		share.setType("text/html");
@@ -206,11 +216,13 @@ public class DrawActivity extends Activity {
 		 * BioMedActivity.getImageName() + ".BMP"));
 		 */
 		ArrayList<Uri> uris = new ArrayList<Uri>();
-		uris.add(Uri.parse("file:///" + BioMedActivity.getSelectedImagePath())); 
+		uris.add(Uri.parse("file:" + BioMedActivity.getSelectedImagePath())); 
 				
 				/*sdcard/MedImagePro/"
 				+ BioMedActivity.getImageName() + ".BMP"));*/
-		uris.add(Uri.parse("file:///" + filePath));
+		uris.add(Uri.parse("file:" + filePath));
+		String a = "file:" + filePath;
+		//uris.add(Uri.parse("file:/mnt/sdcard/MedImagePro/AAA_symptomatic_680x522_28-11-11_115750.xml"));
 				
 				/*sdcard/MedImagePro/"
 				+ BioMedActivity.getImageName() + ".xml"));*/
@@ -271,6 +283,7 @@ public class DrawActivity extends Activity {
 	private void LoadData(String xmlPath) {
 		try {
 			getPoints(xmlPath);
+			lastSavedPath = xmlPath;
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -304,6 +317,8 @@ public class DrawActivity extends Activity {
 		String fileName = path + File.separator + BioMedActivity.getImageName()
 				+ "_" + dateStr + ".xml";
 
+		lastSavedPath = fileName;
+		
 		File newxmlfile = new File(fileName);
 		try {
 			newxmlfile.createNewFile();
@@ -339,7 +354,7 @@ public class DrawActivity extends Activity {
 
 			serializer.attribute("", AppConstants.IMG_NAME, BioMedActivity.getImageName());
 	
-			
+			serializer.attribute("", AppConstants.PPM, Float.toString(DrawSettings.getPPM(this)));
 			
 			serializer.startTag("", AppConstants.ROIS);
 			for (PointPath myPath : _graphics) {
@@ -425,6 +440,14 @@ public class DrawActivity extends Activity {
 		Date d = new Date();
 		CharSequence s = DateFormat.format("dd-MM-yy_hhmmss", d.getTime());
 		return s.toString();
+	}
+
+	public String getLastSavedPath() {
+		return lastSavedPath;
+	}
+
+	public void setLastSavedPath(String lastSavedPath) {
+		this.lastSavedPath = lastSavedPath;
 	}
 
 	public void loadRoi() {

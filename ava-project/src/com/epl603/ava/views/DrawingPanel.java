@@ -136,6 +136,14 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 		this.currentPathIndex = currentPathIndex;
 	}
 
+	public boolean isNeedsSave() {
+		return needsSave;
+	}
+
+	public void setNeedsSave(boolean needsSave) {
+		this.needsSave = needsSave;
+	}
+
 	public ArrayList<PointPath> getPointPaths() {
 		return _pointPaths;
 	}
@@ -454,6 +462,13 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void onDraw(Canvas canvas) {
 
+		// draw to bitmap
+//		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+//				Bitmap.Config.ARGB_8888);
+//		Canvas canvas = new Canvas(bitmap);
+//		view.draw(canvas);
+//		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+		
 		// canvas.drawColor(Color.BLACK);
 		canvas.drawColor(0, Mode.CLEAR);
 
@@ -485,7 +500,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 				canvas.drawPath(trp, mPaintDistance);
 
 				mPaintText.setColor(fp.getColor());
-				canvas.drawText(
+				canvas.drawText(	// todo: add density to the distance
 						Double.toString(Math.round(fp.getDistanceInPixels()
 								* ppm * 100) / 10000.0) + " cm", 0, this.getHeight()
 								- textHeight * density * i,
@@ -584,6 +599,10 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	public void UndoLastPoint() {
+		
+		if (_pointPaths == null || _pointPaths.size() == 0)
+			return;
+		
 		if (currentPathIndex < 0)
 			return;
 

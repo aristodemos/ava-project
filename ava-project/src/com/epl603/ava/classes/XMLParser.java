@@ -103,11 +103,11 @@ public class XMLParser extends DefaultHandler {
 			this.flags.add(myFlagPair);
 		}
 		else if (localName.equals(AppConstants.COLOR)){
-			String a = builder.toString();
+			 //String a = builder.toString();
 			 myFlagPair.setColor(Integer.valueOf(builder.toString())); //attributes.getValue(AppConstants.COLOR)));
 		}
 		else if (localName.equalsIgnoreCase(AppConstants.DISTANCE)){
-			String a = builder.toString();
+			//String a = builder.toString();
 			myFlagPair.setDistanceInPixels(Double.valueOf(builder.toString())); //attributes.getValue(AppConstants.DISTANCE)));
 		}
 		

@@ -7,14 +7,17 @@ import com.epl603.ava.R;
 import com.epl603.ava.classes.AppConstants;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,6 +73,8 @@ public class SelectFileActivity extends Activity {
 						finish();
 					}
 				});
+		
+		registerForContextMenu(this.findViewById(R.id.fileList));
 
 		LoadFiles();
 
@@ -78,8 +83,47 @@ public class SelectFileActivity extends Activity {
 		// lv_arr));
 	}
 
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenu.ContextMenuInfo menuInfo) {
+		
+		 AdapterView.AdapterContextMenuInfo info; 
+	        try { 
+	             info = (AdapterView.AdapterContextMenuInfo) menuInfo; 
+	        } catch (ClassCastException e) { 
+	            return; 
+	        }  
+		ShowDeleteMessage(info.position);
+	}
+	
+	private void ShowDeleteMessage(int index) {
+		
+		final String filename = listContents.get(index);
+		final String path = listPaths.get(index);
+		
+		new AlertDialog.Builder(this)
+		.setTitle("Delete entry?")
+		.setMessage(filename)
+		.setPositiveButton("Delete", new OnClickListener() {
+		    public void onClick(DialogInterface arg0, int arg1) {
+		    	File file = new File(path);
+		    	file.delete();
+		    	LoadFiles();
+		    }
+		})
+		.setNegativeButton("Cancel", new OnClickListener() {
+		    public void onClick(DialogInterface arg0, int arg1) {
+		        // Some stuff to do when cancel got clicked
+		    }
+		})
+		.show();
+	}
+	
 	private void LoadFiles() {
 
+		listPaths.clear();
+		listContents.clear();
+		
 		String[] foldersArr = folders.split(";");
 		for (int i = 0; i < foldersArr.length; i++) {
 			String f = foldersArr[i].trim();

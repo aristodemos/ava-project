@@ -17,13 +17,33 @@
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:id="@+id/linearLayout1" android:layout_gravity="center_horizontal|center_vertical">
 
-			<Button android:layout_width="wrap_content"
-				android:layout_marginRight="20dp" android:background="@drawable/open_btn"
-				android:layout_height="wrap_content" android:id="@+id/mloadButton"></Button>
 
-			<Button android:layout_height="wrap_content"
-				android:layout_gravity="right" android:background="@drawable/load_btn"
-				android:id="@+id/mEditButton" android:layout_width="wrap_content"></Button>
+			<LinearLayout android:orientation="vertical"
+				android:paddingRight="20dp" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/linearLayout1"
+				android:layout_gravity="center_horizontal|center_vertical">
+				<Button android:layout_width="wrap_content"
+					android:layout_gravity="center_horizontal" android:background="@drawable/open_btn"
+					android:layout_height="wrap_content" android:id="@+id/mloadButton"></Button>
+				<TextView android:text="@string/draw" android:background="@drawable/text_bg"
+					android:id="@+id/textView1" android:layout_width="wrap_content"
+					android:textColor="#FFFFFFFF" android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"></TextView>
+
+			</LinearLayout>
+
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:id="@+id/linearLayout1" android:layout_gravity="center_horizontal|center_vertical">
+				<Button android:layout_height="wrap_content"
+					android:layout_gravity="right" android:background="@drawable/load_btn"
+					android:id="@+id/mEditButton" android:layout_width="wrap_content"></Button>
+				<TextView android:text="@string/load" android:background="@drawable/text_bg"
+					android:id="@+id/textView1" android:layout_width="wrap_content"
+					android:textColor="#FFFFFFFF" android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"></TextView>
+			</LinearLayout>
+
 
 		</LinearLayout>
 
@@ -32,15 +52,37 @@
 			android:layout_height="wrap_content" android:id="@+id/linearLayout1"
 			android:layout_gravity="center_horizontal|center_vertical">
 
-			<Button android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true" android:background="@drawable/exit_btn"
-				android:id="@+id/mExitButton" android:layout_marginRight="20dp"
-				android:layout_gravity="center_horizontal" android:layout_width="wrap_content"></Button>
+			<LinearLayout android:orientation="vertical"
+				android:paddingRight="20dp" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/linearLayout1"
+				android:layout_gravity="center_horizontal|center_vertical">
 
-			<Button android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true" android:background="@drawable/settings_btn"
-				android:id="@+id/mSettingsButton" android:layout_gravity="center_horizontal"
-				android:layout_width="wrap_content"></Button>
+				<Button android:layout_height="wrap_content"
+					android:layout_centerHorizontal="true" android:background="@drawable/exit_btn"
+					android:id="@+id/mExitButton" android:layout_gravity="center_horizontal"
+					android:layout_width="wrap_content"></Button>
+
+				<TextView android:text="@string/exit" android:background="@drawable/text_bg"
+					android:id="@+id/textView1" android:layout_width="wrap_content"
+					android:textColor="#FFFFFFFF" android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"></TextView>
+
+			</LinearLayout>
+
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:id="@+id/linearLayout1" android:layout_gravity="center_horizontal|center_vertical">
+				<Button android:layout_height="wrap_content"
+					android:layout_centerHorizontal="true" android:background="@drawable/settings_btn"
+					android:id="@+id/mSettingsButton" android:layout_gravity="center_horizontal"
+					android:layout_width="wrap_content"></Button>
+
+				<TextView android:text="@string/settings"
+					android:background="@drawable/text_bg" android:id="@+id/textView1"
+					android:layout_width="wrap_content" android:textColor="#FFFFFFFF"
+					android:layout_height="wrap_content" android:layout_gravity="center_horizontal"></TextView>
+
+			</LinearLayout>
 
 		</LinearLayout>
 
