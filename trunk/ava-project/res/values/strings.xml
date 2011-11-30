@@ -30,4 +30,8 @@
 	<string name="email_body">This is an automated email from MedImagePro
 		application. \nPlease do not reply. \n\nIf you are not the recipient of this
 		email please ignore this message.</string>
+	<string name="draw">Draw</string>
+	<string name="load">Load</string>
+	<string name="exit">Exit</string>
+	<string name="settings">Options</string>
 </resources>

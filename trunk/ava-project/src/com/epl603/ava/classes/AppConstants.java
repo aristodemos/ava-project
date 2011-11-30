@@ -13,6 +13,7 @@ public class AppConstants {
 	public static final String EXTRA_FILE_PATH = "path";
 	public static final String DOWNLOADS_FOLDER = "/sdcard/Download/";
 	public static final String APP_FOLDER = "/sdcard/medImagePro/";
+	public static final String LOADED_FILE = "loaded_file";
 	
 	public static final int MENU_LOAD_ROI = 0;
 	public static final int MENU_PAUSE_DRAW = 1;
@@ -29,6 +30,7 @@ public class AppConstants {
 	// XML Constants here
 	public static final String MED_IMG = "medImage";
 	public static final String IMG_NAME = "name";
+	public static final String IMG_PPM = "ppm";
 	public static final String NAME = "name:";
 	public static final String ROIS = "ROIs";
 	public static final String ROI = "roi";
